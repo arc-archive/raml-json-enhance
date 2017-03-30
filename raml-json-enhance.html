@@ -31,6 +31,18 @@ window.addEventListener('raml-json-enhance-ready', function(e) {
 });
 ```
 
+**Note** This element MUST be used to enhance parser JSON output in order to use
+any RAML related ARC element. Enhancer creates common data structure and
+expands RAML types. Element expects the JSON object to contain complete data
+about method / endpoint / type / security scheme and so on. It will not look for
+the data in the root of raml definition. Thanks to this, you can push just a part
+of the JSON object to a specific element to make it work.
+
+For example the `<raml-docs-method-viewer>` viewer ecpects the `raml` propety to
+be a method definition only (without of the rest of the RAML structure). If
+enhanced with the library, the JSON object describing the method will contain
+all required information to render the view.
+
 @group Logic Elements
 @element raml-json-enhance
 @demo demo/index.html
