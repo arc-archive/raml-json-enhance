@@ -1,0 +1,15 @@
+language: node_js
+sudo: required
+dist: trusty
+node_js: stable
+before_script:
+- npm install --silent bower polymer-cli
+- ./node_modules/.bin/bower install --silent
+script:
+- npm run lint
+branches:
+  only:
+    - stage
+    - develop
+after_success:
+  - node tasks/ci.js
