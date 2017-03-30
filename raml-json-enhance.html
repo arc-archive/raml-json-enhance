@@ -43,6 +43,17 @@ be a method definition only (without of the rest of the RAML structure). If
 enhanced with the library, the JSON object describing the method will contain
 all required information to render the view.
 
+The element contains a set of Polyfills so it will work in the IE11+ browsers.
+
+### Biuld process
+This element uses web workers to expand JSON result (normalize it).
+The element will attempty to load following scitps from the same location where
+this script resides:
+- polyfills.js
+- browser/index.js
+- raml2object.js
+Build scripts should ensure that this resources are included in the final build.
+
 @group Logic Elements
 @element raml-json-enhance
 @demo demo/index.html
