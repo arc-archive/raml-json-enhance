@@ -144,6 +144,9 @@ all required information to render the view.
       if (!json) {
         return this._setResult(undefined);
       }
+      if (json.specification) {
+        json = json.specification;
+      }
       this._normalizeRamlJson(json);
     },
 
