@@ -210,7 +210,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   scope._displayApiStructure = function(json) {
     window.setTimeout(function() {
       var txt = '';
-      debugger;
       json.resources.forEach(function(resource) {
         var rName = resource.displayName;
         var rUri = resource.absoluteUri;
@@ -274,8 +273,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   };
 
   window.addEventListener('raml-json-enhance-ready', function(e) {
-    scope._displayApiStructure(e.target.json);
-    console.log(e.target.json);
+    scope._displayApiStructure(e.detail.json);
+    console.log(e.target.result);
   });
 
   scope._parserReady = function() {
