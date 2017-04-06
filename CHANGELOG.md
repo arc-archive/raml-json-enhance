@@ -1,3 +1,14 @@
+<a name="0.1.6"></a>
+## [0.1.6](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.4...v0.1.6) (2017-04-06)
+
+
+### Docs
+
+* Update list of affected properties in the JSON ([fbe65b9ed24b8b027498168a5cbba31a0e382501](https://github.com/advanced-rest-client/raml-json-enhance/commit/fbe65b9ed24b8b027498168a5cbba31a0e382501))
+* Updated typo in documentation ([a814aedf86dc437c2969af6f3d19630904707863](https://github.com/advanced-rest-client/raml-json-enhance/commit/a814aedf86dc437c2969af6f3d19630904707863))
+
+
+
 <a name="0.1.5"></a>
 ## [0.1.5](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.4...v0.1.5) (2017-04-06)
 
