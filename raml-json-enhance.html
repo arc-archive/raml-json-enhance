@@ -27,7 +27,7 @@ Polymer application can bind to the `result` property which will notify the chan
 window.addEventListener('raml-json-enhance-ready', function(e) {
   console.log(e.detail.json);
   // equals to
-  console.log(e.target.json);
+  console.log(e.target.result);
 });
 ```
 
@@ -53,6 +53,23 @@ this script resides:
 - browser/index.js
 - raml2object.js
 Build scripts should ensure that this resources are included in the final build.
+
+## Affected properties
+- `types`, `traits`, `resourceTypes`, `annotationTypes`, `securitySchemes` - Becomes an object instead of array, keys are object name (with library variable name if applicable)
+- `responses`, `body`, `queryParameters`, `headers`, `properties`, `baseUriParameters`, `annotations`, `uriParameters` are recusively transformed into the arrays
+- types/{object} - Expanded form for a RAML type and a canonical form with computed inheritance and pushed unions to the top level of the type structure. See documantaion for the [expansion library](https://github.com/raml-org/raml-parser-toolbelt/tree/master/tools/datatype-expansion).
+- resource/parentUrl - a full URL of the parent resource
+- resource/allUriParameters - list of all URI parameters that apply to this resource (computed from the root down to current resource)
+- resource/securedBy - Replaces security schema name with schema's definition.
+- method/allUriParameters - The same as for a resource but applied to a method that is direct child of the resource.
+- method/absoluteUri - Full, absolute URL to the method containg URI parametes in their RAML's form, eg `/{fileId}`
+- method/securedBy - The same as for the resource
+- method/*/headers - Full list of all possible headers compured from traits, security schemes etc
+- method/*/queryParameters - Full list of all possible queryParameters compured from traits, security schemes etc
+- method/responses - Full list of all possible response compured from traits, security schemes etc
+- type/properties/items - replaces type name with type definition
+- */example(s) - always produces `examples` as an array of example contents
+- */structuredExample - content is moved to the *.example array
 
 @group Logic Elements
 @element raml-json-enhance
