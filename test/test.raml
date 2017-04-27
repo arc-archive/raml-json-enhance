@@ -1,0 +1,50 @@
+#%RAML 1.0
+title: My super cool, example API
+version: v1
+baseUri: http://{environment}.api.domain.com/{version}/
+mediaType: [ application/json ]
+
+baseUriParameters:
+  environment:
+    type: string
+    description: |
+      API environment. The value can be one of "development", "stage" or "production"
+      Development environment is avaibale for dev keys (client id).
+      Stage is available internally only and keys are whitelisted for this environment. Keys that are not whitelisted will always return 404 for any call.
+      Production is available for redular keys (klient ids).
+    pattern: (development|stage|production)
+    example: production
+
+securitySchemes:
+  basic:
+    description: |
+      This API supports Basic Authentication for staging environment.
+    type: Basic Authentication
+  digest:
+    description: |
+      This API supports DigestSecurityScheme Authentication for staging environment.
+    type: Digest Authentication
+
+/endpointA:
+  get:
+    headers:
+      strig-header:
+        example: 123456-acme.client.com
+        type: string
+        required: true
+/endpointB:
+  get:
+    headers:
+      dropdown:
+        displayName: Label for header
+        type: number
+        default: 1
+        description: Test header
+/endpointC:
+  get:
+    headers:
+      dropdown:
+        displayName: Label for header
+        enum: [ one, two ]
+        default: one
+        description: Test header
