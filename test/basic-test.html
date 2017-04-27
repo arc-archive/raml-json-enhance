@@ -18,10 +18,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../iron-test-helpers/test-helpers.js"></script>
     <script src="../../iron-test-helpers/mock-interactions.js"></script>
 
-    <!-- Step 1: import the element to test -->
+    <link rel="import" href="../../raml-js-parser/raml-js-parser.html">
     <link rel="import" href="../raml-json-enhance.html">
   </head>
   <body>
+
+    <test-fixture id="parser">
+      <template>
+        <raml-js-parser json></raml-js-parser>
+      </template>
+    </test-fixture>
 
     <test-fixture id="basic">
       <template>
@@ -30,14 +36,53 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </test-fixture>
 
     <script>
-    /* global suite, test, fixture, assert */
+    /* global fixture, assert, sinon */
     suite('basic', function() {
+      var parsedRaml;
       var element;
+
+      suiteSetup(function(done) {
+        var baseUrl = location.href.substr(0, location.href.lastIndexOf('/') + 1);
+        var parser = fixture('parser');
+        parser.loadApi(baseUrl + 'test.raml')
+        .then(function(data) {
+          parsedRaml = data.json.specification;
+          done();
+        })
+        .catch(function(e) {
+          done(new Error('Parser error: ' + (e.message || 'Some error happened...')));
+        });
+      });
+
       setup(function() {
         element = fixture('basic');
       });
-      test('`raml-json-enhance` should be initialized', function() {
-        assert.equal(element.isAttached, true, 'element.isAttached equals true');
+
+      test('result is undefined', function() {
+        assert.isUndefined(element.result);
+      });
+
+      test('Enhances JSON from raml parser', function() {
+        var spy = sinon.stub();
+        element.addEventListener('raml-json-enhance-ready', spy);
+        element.json = parsedRaml;
+      });
+
+      test('The result property is set', function(done) {
+        this.timeout(30000);
+        var clb = function() {
+          element.removeEventListener('raml-json-enhance-ready', clb);
+          assert.isObject(element.result);
+
+          done();
+        };
+        var clbErr = function(e) {
+          element.removeEventListener('error', clbErr);
+          done(new Error(e.detail.message));
+        };
+        element.addEventListener('raml-json-enhance-ready', clb);
+        element.addEventListener('error', clbErr);
+        element.json = parsedRaml;
       });
     });
     </script>

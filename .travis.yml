@@ -4,12 +4,24 @@ dist: trusty
 node_js: stable
 before_script:
 - npm install --silent bower polymer-cli
-- ./node_modules/.bin/bower install --silent
+- "./node_modules/.bin/bower install --silent"
+addons:
+  sauce_connect: true
 script:
 - npm run lint
+- ./node_modules/.bin/polymer test --plugin sauce --job-name "raml-json-enhance:${TRAVIS_BRANCH}"
+  --build-number=${TRAVIS_BUILD_NUMBER}
+cache:
+  directories:
+  - bower_components
+  - node_modules
 branches:
   only:
-    - stage
-    - develop
+  - stage
+  - develop
 after_success:
-  - node tasks/ci.js
+- node tasks/ci.js
+env:
+  global:
+  - secure: Tpk6qBAJkPiJ2sxAH1cNsEJavY1bjIK+n3Q306iIrp9IqM717z1ikLu3QNcMnkGLJTVSqnL5QmikSPalq8Z8cxUrD/dU9H54mMkHMwh5vOkZ1qyIwLt+hHaTHbzIR5BNe0o7mlg3ObXr5HxjwoLpNzHvb/z+Ll3UR3Ui/eVJoCBxYBI2Livakj8ZpssmG9xOwam5/u0bvCtdOuTDzMrlk1lNldgavXCNfHiOYH88FdqP1qmwG8573VviPssN9ZCM791r2T/jxwnTqPGQ8iTcToRchuqhpldZ2HQV0JP3tUPqMLjYQqxHEXa3eUeo15CviO3aWyiIwmnBTZy5s9medpbrQGXdMSbaYqTEQfl3kqkDmS7/0h82/uL6xqWYFgLTeSpDXMj58D3HGxdj/hDSEnVlRuT6EE+Zjacx8ZjCeNUEuNMzAkNjKWmnj14zMFb7YUnbKP8GMKwrBaflOmQiJionn+q4QxS4qiDpY0sZ1rf3w9NrxrfK8nHnWNvV5SZbqlx2LBo0vAq+CFSYM4k9gJHzzqPWvOlSEADQHI9xii9Xeq4eoq4RdtlEk7Gt+Km2YzS7zYcOGXYTuEHOVI43rcbj1nWZ0PRB+3tSqBvonx0AFjduD7kS/1cz5jE62kfGI2JBkMxoYdjhwVtgF/uhME+ae0ZwN/Gxy3KRmjMxGvU=
+  - secure: acOgEA7EWxQbKHr1mMiL2pj6oR4iVCkr5mSc2oQKizN+kILntr5wE5X0R9vE0gMkqyOen3erztcRC7Gzbm7Ib5SkEZGmzR32G6i582xuNwBDdBgzCLlZugK+w+BrepB3fwh+AStCc4Rk+1RZMlscHwznVRquOEdqydZO+xNZBn4xO4zLdo0+AOd1tk2LBNK0ZI1OEwPF9SAEfB4g95oPrQ+JmRgP2ojB3siCGBB4gCH+XQZubVpVO1PfLT6FbxqZnJUvQinJN7VI5X1g9dpTR5Xk3AaWMNeIkG/mtKQNDH+BWYd/xjis71k29JGWYPmfkVvqzO5ulj1+EsWFH1VLgdWO8Bk20KGouzuj9m8Esz2GaMPP6o4x5O+cG0uW8yEzvYJ75zfvF8P6OE5qWpv9J2mEPd+/r3AR6U5CqCcmpyluVTuRKAk+dz0QpL2A0UqwX11fyCHsJeA1MilfvUFcx0oojQkWE1mlcNnCUTjw4UoJB5KZ9egdu35VOCjWUc+qg9J55vFUCtPVsp93r2hC/Ww8mLDDsYLRME6xjeHYY8wl+uOx7qH6mYH4UvYftXQI6Yc+avGlORXkpWd/UipOJOWONhqsv+Gg+R7+UxzOsqhemMsBfmEQVZqZbQbBb5/gf+3zLAOtCWwZdQEYXaOfzDOUvC4dSwJzrsn6mHe4auI=
