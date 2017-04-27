@@ -1,6 +1,12 @@
-/* global importScripts, self, raml2obj */
+/* global importScripts, self, raml2obj, MakePromise */
 try {
-  importScripts('polyfills.js', 'browser/index.js', 'raml2object.js');
+  importScripts('polyfills.js', 'Promise.js' , 'browser/index.js', 'raml2object.js');
+  if (!self.Promise) {
+    self.Promise = MakePromise(function(callback) {
+      callback();
+    });
+  }
+  importScripts('Promise-Statics.js');
 } catch (e) {
   self.postMessage({
     error: true,
@@ -10,13 +16,13 @@ try {
 
 self.onmessage = function(e) {
   try {
-    if (performance && performance.mark) {
+    if (typeof performance !== 'undefined' && performance.mark) {
       performance.mark('raml-2-object-start');
     }
     raml2obj
     .parse(e.data.raml)
     .then(function(result) {
-      if (performance && performance.mark) {
+      if (typeof performance !== 'undefined' && performance.mark) {
         performance.mark('raml-2-object-end');
       }
       self.postMessage({
