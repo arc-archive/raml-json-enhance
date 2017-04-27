@@ -1,3 +1,18 @@
+<a name="0.1.8"></a>
+## [0.1.8](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.7...v0.1.8) (2017-04-27)
+
+
+### Fix
+
+* Added type check for the performance API ([e1a2e259bdb102085f980bc18ad6bf1da8ee7d5b](https://github.com/advanced-rest-client/raml-json-enhance/commit/e1a2e259bdb102085f980bc18ad6bf1da8ee7d5b))
+
+### New
+
+* Added copy of Polymer's Promise polyfill to satisfy web workers in safari and IE 10. ([3de2976e47c9be77c168bf9e1d0da52cdb4d878a](https://github.com/advanced-rest-client/raml-json-enhance/commit/3de2976e47c9be77c168bf9e1d0da52cdb4d878a))
+* Added tests and integration wit SauceLabs ([c38f5ae4248da85292ac6be24ae7e36efe4ecb94](https://github.com/advanced-rest-client/raml-json-enhance/commit/c38f5ae4248da85292ac6be24ae7e36efe4ecb94))
+
+
+
 <a name="0.1.7"></a>
 ## [0.1.7](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.6...v0.1.7) (2017-04-06)
 
