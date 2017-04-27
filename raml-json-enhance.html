@@ -162,7 +162,7 @@ Build scripts should ensure that this resources are included in the final build.
      * It uses the Parformance API to mark a specific point in time.
      */
     _markTime: function(name) {
-      if (this.debug && performance && performance.mark) {
+      if (this.debug && typeof performance !== 'undefined' && performance.mark) {
         performance.mark(name);
       }
     },
@@ -219,7 +219,7 @@ Build scripts should ensure that this resources are included in the final build.
     },
 
     _measureData: function() {
-      if (!this.debug || !performance || !performance.mark) {
+      if (!this.debug || typeof performance === 'undefined' || !performance.mark) {
         return;
       }
       performance.measure('worker-work-time', 'raml-worker-expansion-library-send',
