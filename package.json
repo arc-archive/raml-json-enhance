@@ -16,11 +16,11 @@
   "author": "The Advanced REST client authors <arc@mulesoft.com>",
   "scripts": {
     "serve": "node_modules/.bin/polymer serve",
-    "lint": "node_modules/.bin/polymer lint raml-json-enhance.html",
     "deps": "npm install --quiet && bower install --quiet",
     "update-deps": "npm update --quiet && bower update --quiet",
     "test-sauce": "node_modules/.bin/polymer test --plugin sauce --job-name \"raml-json-enhance:local-test\"",
-    "test": "node_modules/.bin/polymer test"
+    "test": "node_modules/.bin/polymer test",
+    "build": "node build-element.js"
   },
   "repository": {
     "type": "git",
