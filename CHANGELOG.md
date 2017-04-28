@@ -1,3 +1,13 @@
+<a name="0.1.10"></a>
+## [0.1.10](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.9...v0.1.10) (2017-04-28)
+
+
+### Update
+
+* Added nev version of the enhancer ([117b86ffd8a97082a3091baafb932647ce7edf27](https://github.com/advanced-rest-client/raml-json-enhance/commit/117b86ffd8a97082a3091baafb932647ce7edf27))
+
+
+
 <a name="0.1.9"></a>
 ## [0.1.9](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.8...v0.1.9) (2017-04-27)
 
