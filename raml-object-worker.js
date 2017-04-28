@@ -1,18 +1,4 @@
-/* global importScripts, self, raml2obj, MakePromise */
-try {
-  importScripts('polyfills.js', 'Promise.js' , 'browser/index.js', 'raml2object.js');
-  if (!self.Promise) {
-    self.Promise = MakePromise(function(callback) {
-      callback();
-    });
-  }
-  importScripts('Promise-Statics.js');
-} catch (e) {
-  self.postMessage({
-    error: true,
-    message: 'Worker import error: ' + e.message
-  });
-}
+/* global raml2obj, self */
 
 self.onmessage = function(e) {
   try {

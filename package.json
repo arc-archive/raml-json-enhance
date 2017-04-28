@@ -20,7 +20,8 @@
     "deps": "npm install --quiet && bower install --quiet",
     "update-deps": "npm update --quiet && bower update --quiet",
     "test-sauce": "node_modules/.bin/polymer test --plugin sauce --job-name \"raml-json-enhance:local-test\"",
-    "test": "node_modules/.bin/polymer test"
+    "test": "node_modules/.bin/polymer test",
+    "build": "node build-element.js"
   },
   "repository": {
     "type": "git",
