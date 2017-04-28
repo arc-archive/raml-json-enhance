@@ -60,3 +60,11 @@ Build scripts should ensure that this resources are included in the final build.
 - */example(s) - always produces `examples` as an array of example contents
 - */structuredExample - content is moved to the *.example array
 
+## Developing this element
+Unlike other web components this one has to be build. The source file to make
+changes to is the `raml-json-enhance-template.html`. After making any change
+to the file call `npm run build`. It will concatenate all required files
+and insert generated web worker contentnt into the element body.
+The `raml-json-enhance.html` will be regenerated each time you call build
+script.
+
