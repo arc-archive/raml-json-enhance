@@ -14,7 +14,7 @@ the License.
 <link rel="import" href="../polymer/polymer.html">
 <!--
 The `<raml-json-enhance>` enhaces the JSON output from the RAML parser so it can
-be used in the ARC elements (which expect enhanced data structure).
+be used in the ARC elements (which expects enhanced data structure).
 
 The work is asynchronous. After the `json` property is set/changed it will call the
 worker automatically and report the result via the `raml-json-enhance-ready` event.
@@ -38,12 +38,12 @@ about method / endpoint / type / security scheme and so on. It will not look for
 the data in the root of raml definition. Thanks to this, you can push just a part
 of the JSON object to a specific element to make it work.
 
-For example the `<raml-docs-method-viewer>` viewer ecpects the `raml` propety to
+For example, the `<raml-docs-method-viewer>` viewer expects the `raml` propety to
 be a method definition only (without of the rest of the RAML structure). If
 enhanced with the library, the JSON object describing the method will contain
 all required information to render the view.
 
-The element contains a set of Polyfills so it will work in the IE11+ browsers.
+The element contains a set of Polyfills so it will work in IE11+ browsers.
 
 ### Biuld process
 This element uses web workers to expand JSON result (normalize it).
@@ -72,10 +72,12 @@ Build scripts should ensure that this resources are included in the final build.
 - */structuredExample - content is moved to the *.example array
 
 ## Developing this element
-Unlike other web components this one has to be build. The source file to make
-changes to is the `raml-json-enhance-template.html`. After making any change
-to the file call `npm run build`. It will concatenate all required files
-and insert generated web worker contentnt into the element body.
+
+Unlike other web components this component has to be build. Make any
+changes to the `raml-json-enhance-template.html`. After making a change call
+`npm run build`. It will concatenate all required files
+and insert generated web worker contentnt into the element's body.
+
 The `raml-json-enhance.html` will be regenerated each time you call build
 script.
 
