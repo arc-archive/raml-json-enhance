@@ -4,7 +4,7 @@
   "license": "Apache-2.0 OR CC-BY-4.0",
   "description": "Enhaces the JSON output from the RAML parser so it can be used in the ARC elements (which expect enhanced data structure)",
   "devDependencies": {
-    "polymer-cli": "^0.16.0"
+    "polymer-cli": "^1.2.0"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -19,7 +19,7 @@
     "deps": "npm install --quiet && bower install --quiet",
     "update-deps": "npm update --quiet && bower update --quiet",
     "test-sauce": "node_modules/.bin/polymer test --plugin sauce --job-name \"raml-json-enhance:local-test\"",
-    "test": "node_modules/.bin/polymer test",
+    "test": "node_modules/.bin/polymer test --plugin local",
     "build": "node build-element.js"
   },
   "repository": {
