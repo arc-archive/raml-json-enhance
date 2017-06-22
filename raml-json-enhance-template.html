@@ -160,13 +160,32 @@ script.
     },
 
     _normalizeRamlJson: function(json) {
-      if (!this._expadndWorker) {
+      var ie10 = /msie 10/i.test(navigator.userAgent);
+      if (!ie10 && !this._expadndWorker) {
         var blob = new Blob([this.$.worker.textContent]);
         var workerUrl = window.URL.createObjectURL(blob);
         var worker = new Worker(workerUrl);
         worker.addEventListener('message', this._workerExpandDataHandler);
         worker.addEventListener('error', this._workerExpandErrorHandler);
         this._expadndWorker = worker;
+      } else if (ie10) {
+        // Hey IE 10 User. You have to suffer main thread freeze! :)
+        // I am doing it even if MS dropped support for IE 10.
+        // I'm not even sure why...
+        var self = {
+          postMessage: function(data) {
+            this._expandWorkerData({
+              data: data
+            });
+          }.bind(this)
+        };
+        eval(this.$.worker.textContent);
+        self.onmessage({
+          data: {
+            raml: json
+          }
+        });
+        return;
       }
       this._markTime('raml-worker-expansion-library-send');
       this._expadndWorker.postMessage({
