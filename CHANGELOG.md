@@ -1,3 +1,13 @@
+<a name="0.1.16"></a>
+## [0.1.16](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.14...v0.1.16) (2017-07-04)
+
+
+### Update
+
+* Updated raml2object module ([5d43ebe62f13b8199184a4f2750bce220a11cafe](https://github.com/advanced-rest-client/raml-json-enhance/commit/5d43ebe62f13b8199184a4f2750bce220a11cafe))
+
+
+
 <a name="0.1.15"></a>
 ## [0.1.15](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.14...v0.1.15) (2017-06-22)
 
