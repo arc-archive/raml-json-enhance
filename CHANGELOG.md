@@ -1,3 +1,52 @@
+<a name="0.1.17"></a>
+## [0.1.17](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.14...v0.1.17) (2017-07-04)
+
+
+### Update
+
+* Updated raml2object module ([5d43ebe62f13b8199184a4f2750bce220a11cafe](https://github.com/advanced-rest-client/raml-json-enhance/commit/5d43ebe62f13b8199184a4f2750bce220a11cafe))
+
+
+
+<a name="0.1.16"></a>
+## [0.1.16](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.14...v0.1.16) (2017-07-04)
+
+
+### Update
+
+* Updated raml2object module ([5d43ebe62f13b8199184a4f2750bce220a11cafe](https://github.com/advanced-rest-client/raml-json-enhance/commit/5d43ebe62f13b8199184a4f2750bce220a11cafe))
+
+
+
+<a name="0.1.15"></a>
+## [0.1.15](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.14...v0.1.15) (2017-06-22)
+
+
+
+
+<a name="0.1.14"></a>
+## [0.1.14](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.13...v0.1.14) (2017-06-22)
+
+
+### Docs
+
+* Updated documentation to be little more in English. Now I don't have a time to rewrite it all ([8d89db4c567c0ef2f5989234d6c9f80b88c830c9](https://github.com/advanced-rest-client/raml-json-enhance/commit/8d89db4c567c0ef2f5989234d6c9f80b88c830c9))
+
+### Udate
+
+* Updated test components versions. ([4da2afaa746a280ae4a2964866e41c58fdf10667](https://github.com/advanced-rest-client/raml-json-enhance/commit/4da2afaa746a280ae4a2964866e41c58fdf10667))
+
+### Update
+
+* Added better type check for the performance property so safari won't fail.. ([c3fd61762ce8c6dfcb08f59297dc25267a60977d](https://github.com/advanced-rest-client/raml-json-enhance/commit/c3fd61762ce8c6dfcb08f59297dc25267a60977d))
+* Added disable directive for local plugins ([6ec6bef5162fd61571499dd47a8c30199cc78348](https://github.com/advanced-rest-client/raml-json-enhance/commit/6ec6bef5162fd61571499dd47a8c30199cc78348))
+* Added increased timeouts to parsing functions ([b138c83a26a5380a340a8e66d0d5fd9255d42afa](https://github.com/advanced-rest-client/raml-json-enhance/commit/b138c83a26a5380a340a8e66d0d5fd9255d42afa))
+* Added support for IE 10. This browser is not supported and it is working very poorly in terms of performance (computations are made in main thread). ([7c4d6bf56703f1c7295daf196528a93cff68d9b4](https://github.com/advanced-rest-client/raml-json-enhance/commit/7c4d6bf56703f1c7295daf196528a93cff68d9b4))
+* Removed sudo from Travis test configuration. ([fdc6b6cf49313a4684f43a2a13bac263a68afa84](https://github.com/advanced-rest-client/raml-json-enhance/commit/fdc6b6cf49313a4684f43a2a13bac263a68afa84))
+* Updated list of browser that are tested ([93a7b1a8ea0b5a06e481c737087e7f37f2f1af63](https://github.com/advanced-rest-client/raml-json-enhance/commit/93a7b1a8ea0b5a06e481c737087e7f37f2f1af63))
+
+
+
 <a name="0.1.13"></a>
 ## [0.1.13](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.12...v0.1.13) (2017-04-28)
 
