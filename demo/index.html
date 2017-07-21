@@ -214,17 +214,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var rName = resource.displayName;
         var rUri = resource.absoluteUri;
         txt += rName + ' <small>' + rUri + '</small>\n';
-        resource.methods.forEach(function(method) {
-          var mName = method.displayName ? method.displayName : null;
-          var mMethod = method.method ? method.method : 'unknown';
-          var mDesc = method.description ? method.description : null;
-          if (mName) {
-            txt += '  ' + mName + ' <small>' + mMethod + '</small>\n';
-          } else {
-            txt += '  ' + mMethod + '\n';
-          }
-          txt += '  <small>' + mDesc + '</small>\n';
-        });
+        if (resource.methods) {
+          resource.methods.forEach(function(method) {
+            var mName = method.displayName ? method.displayName : null;
+            var mMethod = method.method ? method.method : 'unknown';
+            var mDesc = method.description ? method.description : null;
+            if (mName) {
+              txt += '  ' + mName + ' <small>' + mMethod + '</small>\n';
+            } else {
+              txt += '  ' + mMethod + '\n';
+            }
+            txt += '  <small>' + mDesc + '</small>\n';
+          });
+        }
       });
       scope.$.outStruct.innerHTML = txt;
       scope.working = false;

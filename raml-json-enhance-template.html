@@ -92,14 +92,34 @@ script.
       display: none;
     }
     </style>
-    <script id="worker" type="javascript/worker">{{WORKER_CONTENT}}</script>
+    <script id="normalizer" type="javascript/worker">{{RAML2OBJ_CONTENT}}</script>
   </template>
   <script>
+  (function() {
+  /**
+   * Making the a private propery not available in element's API.
+   * Contains a list of currently running workers.
+   *
+   * @type {Array}
+   */
+  var WORKERS = [];
+  /**
+   * @param {String} name Name of the worker.
+   * @return {Worker} A worker object for the name.
+   */
+  function getWorker(name) {
+    for (var i = 0, len = WORKERS.length; i < len; i++) {
+      if (WORKERS[i].name === name) {
+        return WORKERS[i].ref;
+      }
+    }
+  }
   Polymer({
     is: 'raml-json-enhance',
     properties: {
       /**
-       * A JSON retuned by the `toJson()` function of the RAML JS parser.
+       * A JSON retuned by the `toJson()` function of the RAML JS parser's
+       * API object.
        */
       json: {
         type: Object,
@@ -111,20 +131,6 @@ script.
         notify: true,
         readOnly: true
       },
-      // function to be called when worker data are received
-      _workerExpandDataHandler: {
-        type: Function,
-        value: function() {
-          return this._expandWorkerData.bind(this);
-        }
-      },
-      // function to be called when worker error data are received
-      _workerExpandErrorHandler: {
-        type: Function,
-        value: function() {
-          return this._expandWorkerError.bind(this);
-        }
-      },
       /**
        * If true it will generate a report about the usage time using the
        * performance API.
@@ -133,9 +139,17 @@ script.
        */
       debug: Boolean,
       /**
-       * Web worker object used to perform the work.
+       * Current state of the enhancer.
+       * - 0 means ready to work, idle
+       * - 1 - taks is running, pre-expansion tasks are performed
+       * - 2 - expanding types
+       * - 3 - normalizing JavaScript object (from RAML)
        */
-      _expadndWorker: Object
+      state: {
+        type: Number,
+        readOnly: true,
+        value: 0
+      }
     },
 
     /**
@@ -153,82 +167,235 @@ script.
       if (!json) {
         return this._setResult(undefined);
       }
+      this._noSupportedError();
       if (json.specification) {
         json = json.specification;
       }
-      this._normalizeRamlJson(json);
+      this._killWorkers();
+      this._enhance(json);
     },
-
-    _normalizeRamlJson: function(json) {
+    /**
+     * Sends an error when running from unsupported browser.
+     */
+    _noSupportedError: function() {
       var ie10 = /msie 10/i.test(navigator.userAgent);
-      if (!ie10 && !this._expadndWorker) {
-        var blob = new Blob([this.$.worker.textContent]);
-        var workerUrl = window.URL.createObjectURL(blob);
-        var worker = new Worker(workerUrl);
-        worker.addEventListener('message', this._workerExpandDataHandler);
-        worker.addEventListener('error', this._workerExpandErrorHandler);
-        this._expadndWorker = worker;
-      } else if (ie10) {
-        // Hey IE 10 User. You have to suffer main thread freeze! :)
-        // I am doing it even if MS dropped support for IE 10.
-        // I'm not even sure why...
-        var self = {
-          postMessage: function(data) {
-            this._expandWorkerData({
-              data: data
-            });
-          }.bind(this)
-        };
-        eval(this.$.worker.textContent);
-        self.onmessage({
-          data: {
-            raml: json
-          }
-        });
+      if (!ie10) {
         return;
       }
-      this._markTime('raml-worker-expansion-library-send');
-      this._expadndWorker.postMessage({
-        raml: json
+      this._setResult(undefined);
+      this.fire('error', {
+        message: 'This browser is not supported.'
       });
+      throw new Error('This browser is not supported.');
     },
-
-    _expandWorkerData: function(e) {
-      this._markTime('raml-worker-expansion-library-receive');
-      var data = e.data;
-      if (data.error) {
-        console.log('Error in the worker.', data);
-        this.fire('error', {
-          message: data.message
-        });
-        return;
+    /**
+     * Terminates currently running workers.
+     * Thisa is helpful when another process is requested and old process is
+     * still running. It terminates workers so messages from them won't be
+     * sent to the main thread and notified outside for old api call.
+     *
+     * It also clears data URL object created by URL.createObjectURL().
+     *
+     * This resets state to 0.
+     */
+    _killWorkers: function() {
+      for (var i = WORKERS.length - 1; i >= 0; i--) {
+        this.__terminateWorker(WORKERS[i]);
+        WORKERS.splice(i, 1);
       }
-      var result = data.result;
+      this._setState(0);
+    },
+    /**
+     * Terminates the worker if it exists and is running
+     *
+     * @param {Object} workerRef An object created by `__createWorker` function
+     */
+    __terminateWorker: function(workerRef) {
+      workerRef.ref.terminate();
+      workerRef.ref.removeEventListener('message', workerRef.data);
+      workerRef.ref.removeEventListener('error', workerRef.error);
+      this.__clearDataUrl(workerRef.url);
+    },
+    /**
+     * Clears a data URL created by URL.createObjectURL().
+     *
+     * @param {String} url The URL to clean
+     */
+    __clearDataUrl: function(url) {
+      if (url) {
+        window.URL.revokeObjectURL(url);
+      }
+    },
+    /**
+     * Creates a web workers before the work starts.
+     */
+    _createWorkers: function() {
+      var norm = this.__createWorker('_normalize', this.$.normalizer.textContent);
+      WORKERS.push(norm);
+    },
+    /**
+     * Creates an instance of web worker from a text content.
+     *
+     * @param {String} property Name of the worker. `this` must contains
+     * functions for handling data and errors named `property` + `DataHandler`
+     * and `property` + `ErrorHandler`
+     * @param {String} body Body of the worker
+     */
+    __createWorker: function(property, body) {
+      var blob = new Blob([body]);
+      var workerUrl = window.URL.createObjectURL(blob);
+      var worker = new Worker(workerUrl);
+      var dataHandler = this[property + 'DataHandler'].bind(this);
+      var errorHandler = this[property + 'ErrorHandler'].bind(this);
+      worker.addEventListener('message', dataHandler);
+      worker.addEventListener('error', errorHandler);
+
+      return {
+        name: property,
+        ref: worker,
+        url: workerUrl,
+        error: errorHandler,
+        data: dataHandler
+      };
+    },
+    /**
+     * Enhances the JavaScript object.
+     *
+     * @param {Object} json An object returned from RAML js parser after calling
+     * `toJSON`.
+     */
+    _enhance: function(json) {
+      this._createWorkers();
+      this._prepareTypesTask(json);
+    },
+    /**
+     * Calls normalize worker to prepare JSON to be normalized.
+     *
+     * @param {Object} json RAML as JS object
+     */
+    _prepareTypesTask: function(json) {
+      this._setState(1);
+      var worker = getWorker('_normalize');
+      var message = {
+        payload: 'prepare-types',
+        json: json
+      };
+      this._markTime('raml-json-enhance-prepare-start');
+      worker.postMessage(message);
+    },
+    /**
+     * Calls the expansion worker to run the expansion library.
+     *
+     * @param {Object} json RAML as JS object
+     */
+    _expandTypesTask: function(json) {
+      this._setState(2);
+      var worker = getWorker('_normalize');
+      var message = {
+        payload: 'expand-types',
+        types: json.types,
+        raml: json
+      };
+      this._markTime('raml-json-enhance-expand-start');
+      worker.postMessage(message);
+    },
+    /**
+     * Calls the normalize worker to perform main normalization.
+     *
+     * @param {Object} json RAML as JS object
+     */
+    _normalizeTypesTask: function(types, raml) {
+      this._setState(3);
+      var worker = getWorker('_normalize');
+      var message = {
+        payload: 'normalize',
+        types: types,
+        raml: raml
+      };
+      this._markTime('raml-json-enhance-normalize-start');
+      worker.postMessage(message);
+    },
+    /**
+     * Reports results to the called by dispatching the
+     * `raml-json-enhance-ready` event.
+     *
+     * @param {Object} result Expanded and normalized object.
+     */
+    _reportResult: function(result) {
       this._setResult(result);
       this.fire('raml-json-enhance-ready', {
         json: result
       });
-      this._measureData();
+      this._killWorkers();
     },
-
-    _expandWorkerError: function(e) {
-      this._markTime('raml-worker-expansion-library-receive');
-      var err = new Error(e.message || ' Unknown worker error.');
-      console.log('Error in the worker.', err);
+    /**
+     * Reports an error
+     *
+     * @param {String} errorMessage Error message to report.
+     */
+    _reportError: function(errorMessage) {
+      var err = new Error(errorMessage);
       this.fire('error', {
         message: err.message
       });
+      switch (this.state) {
+        case 1:
+          this._markTime('raml-json-enhance-prepare-end');
+          break;
+        case 2:
+          this._markTime('raml-json-enhance-expand-end');
+          break;
+        case 3:
+          this._markTime('raml-json-enhance-normalize-end');
+          break;
+      }
+      this._killWorkers();
+      throw err;
     },
-
-    _measureData: function() {
-      if (!this.debug || typeof performance === 'undefined' || !performance.mark) {
+    /**
+     * Handler for a message from the normalize worker.
+     * Depending on current state it calls next function in the chain.
+     */
+    _normalizeDataHandler: function(e) {
+      var data = e.data;
+      if (data.error) {
+        this._reportError(data.message);
         return;
       }
-      performance.measure('worker-work-time', 'raml-worker-expansion-library-send',
-        'raml-worker-expansion-library-receive');
-      var items = performance.getEntriesByType('measure');
-      console.log(items);
+      switch (this.state) {
+        case 1:
+          this._markTime('raml-json-enhance-prepare-end');
+          this._expandTypesTask(data.json);
+          this._appendMeasuerements(data.analyser);
+          break;
+        case 2:
+          this._markTime('raml-json-enhance-expand-end');
+          this._normalizeTypesTask(data.types, data.raml);
+          break;
+        case 3:
+          this._markTime('raml-json-enhance-normalize-end');
+          this._appendMeasuerements(data.analyser);
+          this._reportResult(data.json);
+          break;
+        default:
+          throw new Error('Normalize worker data handler called in invalid state');
+      }
+    },
+    /**
+     * Normalize worker error handler.
+     */
+    _normalizeErrorHandler: function(e) {
+      var message = (e && e.message) ? 'Normalize worker: ' + e.message :
+        'Unknown normalize worker error.';
+      this._reportError(message);
+    },
+
+    _appendMeasuerements: function(list) {
+      if (list && list.length) {
+        console.log(list);
+      }
     }
   });
+  })();
   </script>
 </dom-module>
