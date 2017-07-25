@@ -36,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </test-fixture>
 
     <script>
-    /* global fixture, assert, sinon */
+    /* global fixture, assert */
     suite('basic', function() {
       var parsedRaml;
       var element;
@@ -63,18 +63,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         assert.isUndefined(element.result);
       });
 
-      test('Enhances JSON from raml parser', function() {
-        this.timeout(30000);
-        var spy = sinon.stub();
-        element.addEventListener('raml-json-enhance-ready', spy);
-        element.json = parsedRaml;
+      test('state is zero', function() {
+        assert.equal(element.state, 0);
       });
 
       test('The result property is set', function(done) {
         this.timeout(30000);
         var clb = function() {
           element.removeEventListener('raml-json-enhance-ready', clb);
+          element.removeEventListener('error', clbErr);
           assert.isObject(element.result);
+
+          done();
+        };
+        var clbErr = function(e) {
+          element.removeEventListener('error', clbErr);
+          element.removeEventListener('raml-json-enhance-ready', clb);
+          done(new Error(e.detail.message));
+        };
+        element.addEventListener('raml-json-enhance-ready', clb);
+        element.addEventListener('error', clbErr);
+        element.json = parsedRaml;
+      });
+
+      test('State is restored to zero', function(done) {
+        this.timeout(30000);
+        var clb = function() {
+          element.removeEventListener('raml-json-enhance-ready', clb);
+          element.removeEventListener('error', clbErr);
+          assert.equal(element.state, 0);
 
           done();
         };
