@@ -17,8 +17,7 @@ var RAMLnormalizer = {
   reportResult: function(result) {
     self.postMessage({
       error: false,
-      json: result.json,
-      analyser: result.analyser || []
+      json: result.json
     });
   },
 
@@ -27,8 +26,7 @@ var RAMLnormalizer = {
     self.postMessage({
       error: false,
       types: result.types,
-      raml: result.raml,
-      analyser: result.analyser || []
+      raml: result.raml
     });
   },
   // Handler for the message event.
@@ -39,26 +37,23 @@ var RAMLnormalizer = {
     }
     switch (payload) {
       case 'prepare-types':
-        RAMLnormalizer.prepareObject(e.data.json, e.data.analyze);
+        RAMLnormalizer.prepareObject(e.data.json);
         break;
       case 'expand-types':
-        RAMLnormalizer.expandTypes(e.data.types, e.data.analyze, e.data.raml);
+        RAMLnormalizer.expandTypes(e.data.types, e.data.raml);
         break;
       case 'normalize':
-        RAMLnormalizer.normalize(e.data.raml, e.data.types, e.data.analyze);
+        RAMLnormalizer.normalize(e.data.raml, e.data.types);
         break;
       default:
         return RAMLnormalizer.reportError('Unknown payload');
     }
   },
   // Prepares object to be expanded.
-  prepareObject: function(obj, analyze) {
+  prepareObject: function(obj) {
     var msg;
     try {
-      var opts = {
-        analyze: analyze
-      };
-      raml2obj.prepareObject(obj, opts)
+      raml2obj.prepareObject(obj)
       .then(function(result) {
         RAMLnormalizer.reportResult(result);
       })
@@ -72,13 +67,10 @@ var RAMLnormalizer = {
     }
   },
   // Normalizes the object.
-  normalize: function(raml, types, analyze) {
+  normalize: function(raml, types) {
     var msg;
     try {
-      var opts = {
-        analyze: analyze
-      };
-      raml2obj.normalize(raml, types, opts)
+      raml2obj.normalize(raml, types)
       .then(function(result) {
         RAMLnormalizer.reportResult(result);
       })
@@ -93,13 +85,10 @@ var RAMLnormalizer = {
   },
 
   // Prepares object to be expanded.
-  expandTypes: function(types, analyze, raml) {
+  expandTypes: function(types, raml) {
     var msg;
     try {
-      var opts = {
-        analyze: analyze
-      };
-      raml2obj.expandTypes(types, opts)
+      raml2obj.expandTypes(types)
       .then(function(result) {
         result.raml = raml;
         RAMLnormalizer.reportExpandResult(result);
