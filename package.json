@@ -23,7 +23,7 @@
     "update-deps": "npm update --quiet && bower update --quiet",
     "test-sauce": "node_modules/.bin/polymer test --plugin sauce --job-name \"raml-json-enhance:local-test\"",
     "test": "node_modules/.bin/polymer test --plugin local",
-    "build": "build-element.sh"
+    "build": "./build-element.sh"
   },
   "repository": {
     "type": "git",
