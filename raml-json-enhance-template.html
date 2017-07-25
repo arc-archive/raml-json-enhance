@@ -338,6 +338,7 @@ script.
           this._normalizeTypesTask(data.types, data.raml);
           break;
         case 3:
+          this._setState(0);
           this._reportResult(data.json);
           break;
         default:
