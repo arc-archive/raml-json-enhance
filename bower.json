@@ -8,7 +8,11 @@
   ],
   "keywords": [
     "web-components",
-    "polymer"
+    "polymer",
+    "raml",
+    "json",
+    "raml2obj",
+    "enhance"
   ],
   "private": true,
   "main": [
