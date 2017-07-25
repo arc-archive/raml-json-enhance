@@ -4,5 +4,5 @@
 ./node_modules/.bin/uglifyjs -c --screw-ie8 lib/polyfills.js > build/polyfills.js
 ./node_modules/.bin/uglifyjs -c --screw-ie8 bower_components/promise-polyfill/Promise.js > build/Promise.js
 ./node_modules/.bin/uglifyjs -c --screw-ie8 bower_components/promise-polyfill/Promise-Statics.js > build/Promise-Statics.js
-./node_modules/.bin/uglifyjs -c --screw-ie8 normalize-worker.js > build/normalize-worker.js
+./node_modules/.bin/uglifyjs -c --screw-ie8 lib/normalize-worker.js > build/normalize-worker.js
 node build-element.js
