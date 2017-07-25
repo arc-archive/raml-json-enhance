@@ -49,6 +49,12 @@
     "node_modules",
     "bower_components",
     "test",
-    "tasks"
+    "tasks",
+    "browser",
+    "lib",
+    "raml-json-enhance-template.html",
+    "wct.conf.json",
+    "polymer.json",
+    "normalize-worker.js"
   ]
 }
