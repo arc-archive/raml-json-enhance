@@ -53,7 +53,7 @@ var RAMLnormalizer = {
   prepareObject: function(obj) {
     var msg;
     try {
-      raml2obj.prepareObject(obj)
+      raml2obj.prepareObject(obj, {})
       .then(function(result) {
         RAMLnormalizer.reportResult(result);
       })
@@ -70,7 +70,7 @@ var RAMLnormalizer = {
   normalize: function(raml, types) {
     var msg;
     try {
-      raml2obj.normalize(raml, types)
+      raml2obj.normalize(raml, types, {})
       .then(function(result) {
         RAMLnormalizer.reportResult(result);
       })
@@ -88,7 +88,7 @@ var RAMLnormalizer = {
   expandTypes: function(types, raml) {
     var msg;
     try {
-      raml2obj.expandTypes(types)
+      raml2obj.expandTypes(types, {})
       .then(function(result) {
         result.raml = raml;
         RAMLnormalizer.reportExpandResult(result);
