@@ -92,213 +92,8 @@ script.
       display: none;
     }
     </style>
-    <script id="worker" type="javascript/worker">// All polyfills source: Mozilla Developer Network
-if (typeof Object.assign !== 'function') {
-  Object.assign = function(target) {
-    'use strict';
-    if (target === null) {
-      throw new TypeError('Cannot convert undefined or null to object');
-    }
-    var to = Object(target);
-    for (var index = 1; index < arguments.length; index++) {
-      var nextSource = arguments[index];
-      if (nextSource !== null) {
-        for (var nextKey in nextSource) {
-          if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-            to[nextKey] = nextSource[nextKey];
-          }
-        }
-      }
-    }
-    return to;
-  };
-}
-if (!Object.keys) {
-  Object.keys = (function() {
-    'use strict';
-    var hasOwnProperty = Object.prototype.hasOwnProperty;
-    var hasDontEnumBug = !({
-      toString: null
-    }).propertyIsEnumerable('toString');
-    var dontEnums = [
-      'toString',
-      'toLocaleString',
-      'valueOf',
-      'hasOwnProperty',
-      'isPrototypeOf',
-      'propertyIsEnumerable',
-      'constructor'
-    ];
-    var dontEnumsLength = dontEnums.length;
-    return function(obj) {
-      if (typeof obj !== 'function' && (typeof obj !== 'object' || obj === null)) {
-        throw new TypeError('Object.keys called on non-object');
-      }
-
-      var result = [];
-      var prop;
-      var i;
-
-      for (prop in obj) {
-        if (hasOwnProperty.call(obj, prop)) {
-          result.push(prop);
-        }
-      }
-
-      if (hasDontEnumBug) {
-        for (i = 0; i < dontEnumsLength; i++) {
-          if (hasOwnProperty.call(obj, dontEnums[i])) {
-            result.push(dontEnums[i]);
-          }
-        }
-      }
-      return result;
-    };
-  }());
-}
-if (!Array.isArray) {
-  Array.isArray = function(arg) {
-    return Object.prototype.toString.call(arg) === '[object Array]';
-  };
-}
-;/**
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-function MakePromise(asap) {
-  function Promise(fn) {
-    if (typeof this !== 'object' || typeof fn !== 'function') {
-      throw new TypeError();
-    }
-    this._state = null;
-    this._value = null;
-    this._deferreds = [];
-
-    doResolve(fn, resolve.bind(this), reject.bind(this));
-  }
-
-  function handle(deferred) {
-    if (this._state === null) {
-      this._deferreds.push(deferred);
-      return;
-    }
-    var cb = this._state ? deferred.onFulfilled : deferred.onRejected;
-    if (typeof cb !== 'function') {
-      (this._state ? deferred.resolve : deferred.reject)(this._value);
-      return;
-    }
-    var ret;
-    try {
-      ret = cb(this._value);
-    } catch (e) {
-      deferred.reject(e);
-      return;
-    }
-    deferred.resolve(ret);
-  }
-
-  function resolve(newValue) {
-    try { //Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
-      if (newValue === this) {
-        throw new TypeError();
-      }
-      if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
-        var then = newValue.then;
-        if (typeof then === 'function') {
-          doResolve(then.bind(newValue), resolve.bind(this), reject.bind(this));
-          return;
-        }
-      }
-      this._state = true;
-      this._value = newValue;
-      finale.call(this);
-    } catch (e) {
-      reject.call(this, e);
-    }
-  }
-
-  function reject(newValue) {
-    this._state = false;
-    this._value = newValue;
-    finale.call(this);
-  }
-
-  function finale() {
-    for (var i = 0, len = this._deferreds.length; i < len; i++) {
-      handle.call(this, this._deferreds[i]);
-    }
-    this._deferreds = null;
-  }
-
-  /**
-   * Take a potentially misbehaving resolver function and make sure
-   * onFulfilled and onRejected are only called once.
-   *
-   * Makes no guarantees about asynchrony.
-   */
-  function doResolve(fn, onFulfilled, onRejected) {
-    var done = false;
-    try {
-      fn(function(value) {
-        if (done) return;
-        done = true;
-        onFulfilled(value);
-      }, function(reason) {
-        if (done) return;
-        done = true;
-        onRejected(reason);
-      })
-    } catch (ex) {
-      if (done) return;
-      done = true;
-      onRejected(ex);
-    }
-  }
-
-  Promise.prototype['catch'] = function(onRejected) {
-    return this.then(null, onRejected);
-  };
-
-  Promise.prototype.then = function(onFulfilled, onRejected) {
-    var me = this;
-    return new Promise(function(resolve, reject) {
-      handle.call(me, {
-        onFulfilled: onFulfilled,
-        onRejected: onRejected,
-        resolve: resolve,
-        reject: reject
-      });
-    })
-  };
-
-  Promise.resolve = function(value) {
-    if (value && typeof value === 'object' && value.constructor === Promise) {
-      return value;
-    }
-
-    return new Promise(function(resolve) {
-      resolve(value);
-    });
-  };
-
-  Promise.reject = function(value) {
-    return new Promise(function(resolve, reject) {
-      reject(value);
-    });
-  };
-
-
-  return Promise;
-}
-
-if (typeof module !== 'undefined') {
-  module.exports = MakePromise;
-}
+    <script id="normalizer" type="javascript/worker">"function"!=typeof Object.assign&&(Object.assign=function(target){"use strict";if(null===target)throw new TypeError("Cannot convert undefined or null to object");for(var to=Object(target),index=1;index<arguments.length;index++){var nextSource=arguments[index];if(null!==nextSource)for(var nextKey in nextSource)Object.prototype.hasOwnProperty.call(nextSource,nextKey)&&(to[nextKey]=nextSource[nextKey])}return to}),Object.keys||(Object.keys=function(){"use strict";var hasOwnProperty=Object.prototype.hasOwnProperty,hasDontEnumBug=!{toString:null}.propertyIsEnumerable("toString"),dontEnums=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],dontEnumsLength=dontEnums.length;return function(obj){if("function"!=typeof obj&&("object"!=typeof obj||null===obj))throw new TypeError("Object.keys called on non-object");var prop,i,result=[];for(prop in obj)hasOwnProperty.call(obj,prop)&&result.push(prop);if(hasDontEnumBug)for(i=0;i<dontEnumsLength;i++)hasOwnProperty.call(obj,dontEnums[i])&&result.push(dontEnums[i]);return result}}()),Array.isArray||(Array.isArray=function(arg){return"[object Array]"===Object.prototype.toString.call(arg)});
+;function MakePromise(asap){function Promise(fn){if("object"!=typeof this||"function"!=typeof fn)throw new TypeError;this._state=null,this._value=null,this._deferreds=[],doResolve(fn,resolve.bind(this),reject.bind(this))}function handle(deferred){var me=this;if(null===this._state)return void this._deferreds.push(deferred);asap(function(){var cb=me._state?deferred.onFulfilled:deferred.onRejected;if("function"!=typeof cb)return void(me._state?deferred.resolve:deferred.reject)(me._value);var ret;try{ret=cb(me._value)}catch(e){return void deferred.reject(e)}deferred.resolve(ret)})}function resolve(newValue){try{if(newValue===this)throw new TypeError;if(newValue&&("object"==typeof newValue||"function"==typeof newValue)){var then=newValue.then;if("function"==typeof then)return void doResolve(then.bind(newValue),resolve.bind(this),reject.bind(this))}this._state=!0,this._value=newValue,finale.call(this)}catch(e){reject.call(this,e)}}function reject(newValue){this._state=!1,this._value=newValue,finale.call(this)}function finale(){for(var i=0,len=this._deferreds.length;i<len;i++)handle.call(this,this._deferreds[i]);this._deferreds=null}function doResolve(fn,onFulfilled,onRejected){var done=!1;try{fn(function(value){done||(done=!0,onFulfilled(value))},function(reason){done||(done=!0,onRejected(reason))})}catch(ex){if(done)return;done=!0,onRejected(ex)}}return Promise.prototype.catch=function(onRejected){return this.then(null,onRejected)},Promise.prototype.then=function(onFulfilled,onRejected){var me=this;return new Promise(function(resolve,reject){handle.call(me,{onFulfilled:onFulfilled,onRejected:onRejected,resolve:resolve,reject:reject})})},Promise.resolve=function(value){return value&&"object"==typeof value&&value.constructor===Promise?value:new Promise(function(resolve){resolve(value)})},Promise.reject=function(value){return new Promise(function(resolve,reject){reject(value)})},Promise}"undefined"!=typeof module&&(module.exports=MakePromise);
 ;if(typeof Math.imul == "undefined" || (Math.imul(0xffffffff,5) == 0)) {
     Math.imul = function (a, b) {
         var ah  = (a >>> 16) & 0xffff;
@@ -922,81 +717,37 @@ Vh(Lp,xk,function(b){var a=Pp(b),c=Q.c(b,Y,a),d=x(F.a?F.a("array",a):F.call(null
 Vh(Lp,"union",function(b){return Q.c(b,Ai,Ze($g(X.a(function(a){return x(Dp(a))?Ai.b(a):a},Ze(X.a(Lp,Ai.b(b)))))))});za();ba("datatype_expansion.js.expandedForm",function(b,a,c){try{var d=ap(Fh(b)),e=$e.a(V,X.a(function(){return function(a){var b=P(a,0,null);a=P(a,1,null);return new T(null,2,5,U,[b,ap(a)],null)}}(d),Fh(a))),f=sp(Fh(d),Fh(e)),g=Ch(f);null!=c&&(c.a?c.a(null,g):c.call(null,null,g));return g}catch(k){if(k instanceof Error&&null!=c)return c.a?c.a(k,null):c.call(null,k,null);throw k;}});
 ba("datatype_expansion.js.canonicalForm",function(b,a){try{var c=ap(Fh(b)),d=Lp.b?Lp.b(c):Lp.call(null,c),e=Ch(d);null!=a&&(a.a?a.a(null,e):a.call(null,null,e));return e}catch(f){if(f instanceof Error&&null!=a)return a.a?a.a(f,null):a.call(null,f,null);throw f;}});
 })();
-;"use strict";var _createClass=function(){function defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor)}}return function(Constructor,protoProps,staticProps){if(protoProps)defineProperties(Constructor.prototype,protoProps);if(staticProps)defineProperties(Constructor,staticProps);return Constructor}}();function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function")}}(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++){s(r[o])}return s})({1:[function(require,module,exports){function _isObject(obj){return obj===Object(obj)}function _objectToArray(obj){if(Array.isArray(obj)){return obj}return Object.keys(obj).map(function(key){if(_isObject(obj[key])){obj[key].key=key}return obj[key]})}function _arrayToObject(arr){return arr.reduce(function(acc,cur){Object.keys(cur).forEach(function(key){acc[key]=cur[key]});return acc},{})}function recursiveObjectToArray(obj){if(_isObject(obj)){Object.keys(obj).forEach(function(key){var value=obj[key];if(_isObject(obj)&&["responses","body","queryParameters","headers","properties","baseUriParameters","annotations","uriParameters"].indexOf(key)!==-1){obj[key]=_objectToArray(value)}recursiveObjectToArray(value)})}else if(Array.isArray(obj)){obj.forEach(function(value){recursiveObjectToArray(value)})}return obj}function arraysToObjects(ramlObj){["types","traits","resourceTypes","annotationTypes","securitySchemes"].forEach(function(key){if(ramlObj[key]){ramlObj[key]=_arrayToObject(ramlObj[key])}});return ramlObj}module.exports={arraysToObjects:arraysToObjects,recursiveObjectToArray:recursiveObjectToArray}},{}],2:[function(require,module,exports){var raml2obj=require("./");if(typeof window==="undefined"){self.raml2obj=raml2obj}else{window.raml2obj=raml2obj}},{"./":4}],3:[function(require,module,exports){function _isObject(obj){return obj===Object(obj)}function makeConsistent(obj,types){if(Array.isArray(obj)){obj.forEach(function(value){makeConsistent(value,types)})}else if(_isObject(obj)){if(obj.type){if(Array.isArray(obj.type)){obj.type=obj.type[0]}if(types&&types[obj.type]){var typedef=types[obj.type];var objectExamples=[];if(obj.examples&&typedef.examples){objectExamples=obj.examples}if(obj.example&&typedef.example){objectExamples.push(obj.example)}var objectProperties=obj.properties;var objectItems=obj.items;var objectDefault=obj.default;var objectDescription=obj.description;var objectEnum=obj.enum;Object.assign(obj,types[obj.type]);obj.__typeConsistent=true;if(objectExamples.length){if(!obj.examples||!obj.examples.length){obj.examples=[]}objectExamples.forEach(function(item){obj.examples.push(item)})}if(objectProperties){Object.assign(obj.properties,objectProperties)}if(objectItems){Object.assign(obj.items,objectItems)}if(objectDefault){obj.default=objectDefault}if(objectDescription){obj.description=objectDescription}if(objectEnum){obj.enum=objectEnum}}}if(obj.items&&types&&types[obj.items]){obj.items=types[obj.items]}if(obj.examples&&obj.examples.length){obj.examples=obj.examples.map(function(example){return example.value?example.value:example})}if(obj.structuredExample){if(typeof obj.examples==="undefined"){obj.examples=[]}obj.examples.push(obj.structuredExample.value);delete obj.example;delete obj.structuredExample}var keys=Object.keys(obj);keys.forEach(function(key){if(obj.__typeConsistent&&["properties","items"].indexOf(key)!==-1){return}makeConsistent(obj[key],types)})}return obj}module.exports=makeConsistent},{}],4:[function(require,module,exports){"use strict";var makeConsistent=require("./consistency-helpers");var _require=require("./arrays-objects-helpers"),arraysToObjects=_require.arraysToObjects,recursiveObjectToArray=_require.recursiveObjectToArray;var Raml2Object=function(){function Raml2Object(object){_classCallCheck(this,Raml2Object);this.raml=object;this.debug=false}_createClass(Raml2Object,[{key:"mark",value:function mark(title){if(this.debug&&performance&&performance.mark){performance.mark(title)}}},{key:"getMeasurement",value:function getMeasurement(){if(!this.debug){return[]}try{performance.measure("raml2obj-enhace","raml2obj-enhace-start","raml2obj-enhace-end");performance.measure("raml2obj-arrays-to-object","raml2obj-arrays-to-object-start","raml2obj-arrays-to-object-end");performance.measure("raml2obj-expanding-root-types","raml2obj-expanding-root-types-start","raml2obj-expanding-root-types-end");performance.measure("raml2obj-make-consistent-root-types","raml2obj-make-consistent-root-types-start","raml2obj-make-consistent-root-types-end");performance.measure("raml2obj-make-consistent-raml","raml2obj-make-consistent-raml-start","raml2obj-make-consistent-raml-end");performance.measure("raml2obj-recursive-object-to-array","raml2obj-recursive-object-to-array-start","raml2obj-recursive-object-to-array-end");performance.measure("raml2obj-apply-raml-types","raml2obj-apply-raml-types-start","raml2obj-apply-raml-types-end")}catch(e){return[]}return performance.getEntriesByType("measure")}},{key:"enhance",value:function enhance(){var _this=this;this.mark("raml2obj-enhace-start");this.mark("raml2obj-arrays-to-object-start");arraysToObjects(this.raml);this.mark("raml2obj-arrays-to-object-end");this.mark("raml2obj-expanding-root-types-start");return this.expandRootTypes(this.raml.types).then(function(expanded){_this.mark("raml2obj-expanding-root-types-end");_this.mark("raml2obj-make-consistent-root-types-start");var types=makeConsistent(expanded);_this.mark("raml2obj-make-consistent-root-types-end");delete _this.raml.types;_this.mark("raml2obj-make-consistent-raml-start");makeConsistent(_this.raml,types);_this.mark("raml2obj-make-consistent-raml-end");_this.mark("raml2obj-recursive-object-to-array-start");recursiveObjectToArray(_this.raml);_this.mark("raml2obj-recursive-object-to-array-end");_this.securitySchemes=_this.raml.securitySchemes;_this.mark("raml2obj-apply-raml-types-start");_this.applyRamlTypes(_this.raml);_this.mark("raml2obj-apply-raml-types-end");if(types){_this.raml.types=types}_this.mark("raml2obj-enhace-end");return _this.raml})}},{key:"applySecuritySchemes",value:function applySecuritySchemes(object){if(!object.queryParameters){object.queryParameters=[]}if(!object.headers){object.headers=[]}if(!object.securedBy){object.securedBy=[]}var responses=[];object.securedBy.forEach(function(scheme){if(!scheme||typeof scheme==="string"){return}if(scheme.describedBy){if(scheme.describedBy.queryParameters){object.queryParameters=object.queryParameters.concat(scheme.describedBy.queryParameters)}if(scheme.describedBy.headers){object.headers=object.headers.concat(scheme.describedBy.headers)}if(scheme.describedBy.responses){responses=responses.concat(scheme.describedBy.responses)}}});if(object.responses){responses=responses.concat(object.responses)}responses.sort(function(a,b){var aCode=Number(a.code);var bCode=Number(b.code);if(aCode>bCode){return 1}if(aCode<bCode){return-1}return 0});object.responses=responses}},{key:"isObject",value:function isObject(obj){return obj===Object(obj)}},{key:"addSecuritSchemes",value:function addSecuritSchemes(object){var _this2=this;var rootSchemes=this.securitySchemes;if(!rootSchemes||!Object.keys(rootSchemes).length){return}if(!object||!object.securedBy||!object.securedBy.length){return}var added=false;object.securedBy.forEach(function(item,i){if(typeof item==="string"){if(item in rootSchemes){added=true;object.securedBy[i]=Object.assign({},rootSchemes[item])}}else if(_this2.isObject(item)){var keys=Object.keys(item);var key=keys[0];if(key in rootSchemes){added=true;var schema=Object.assign({},rootSchemes[key]);var params=item[key];schema.settings=Object.assign({},schema.settings,params);object.securedBy[i]=schema}}});if(added){this.applySecuritySchemes(object)}}},{key:"applyRamlTypes",value:function applyRamlTypes(ramlObj,parentUrl,allUriParameters){var _this3=this;if(!ramlObj.resources){return}ramlObj.resources.forEach(function(resource){resource.parentUrl=parentUrl||"";resource.allUriParameters=ramlObj.baseUriParameters||[];if(allUriParameters){resource.allUriParameters=resource.allUriParameters.concat(allUriParameters)}if(resource.uriParameters){resource.allUriParameters=resource.allUriParameters.concat(resource.uriParameters)}if(resource.methods){resource.methods.forEach(function(method){method.allUriParameters=resource.allUriParameters;method.absoluteUri=resource.absoluteUri;_this3.addSecuritSchemes(method)})}_this3.addSecuritSchemes(resource);_this3.applyRamlTypes(resource,resource.parentUrl+resource.relativeUri,resource.allUriParameters)})}},{key:"expandRootTypes",value:function expandRootTypes(types){var _this4=this;if(!types){return Promise.resolve(types)}var promises=Object.keys(types).map(function(key){return _this4._expandType(types,key)});return Promise.all(promises).then(function(results){results.forEach(function(result){types[result[0]]=result[1]});return types})}},{key:"_expandType",value:function _expandType(types,key){return new Promise(function(resolve){datatype_expansion.js.expandedForm(types[key],types,function(err,expanded){if(expanded){datatype_expansion.js.canonicalForm(expanded,function(err2,canonical){if(canonical){resolve([key,canonical])}else{resolve([key,types[key]])}})}else{resolve([key,types[key]])}})})}}]);return Raml2Object}();module.exports.parse=function(source){var r2o=new Raml2Object(source);return r2o.enhance()}},{"./arrays-objects-helpers":1,"./consistency-helpers":3}]},{},[2]);
-;if(!self.Promise){self.Promise=MakePromise(function(c){c()})}/**
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
-*/
-Promise.all = Promise.all || function () {
-  var args = Array.prototype.slice.call(arguments.length === 1 && Array.isArray(arguments[0]) ? arguments[0] : arguments);
-
-  return new Promise(function (resolve, reject) {
-    if (args.length === 0) return resolve([]);
-    var remaining = args.length;
-    function res(i, val) {
-      try {
-        if (val && (typeof val === 'object' || typeof val === 'function')) {
-          var then = val.then;
-          if (typeof then === 'function') {
-            then.call(val, function (val) { res(i, val) }, reject);
-            return;
-          }
-        }
-        args[i] = val;
-        if (--remaining === 0) {
-          resolve(args);
-        }
-      } catch (ex) {
-        reject(ex);
-      }
-    }
-    for (var i = 0; i < args.length; i++) {
-      res(i, args[i]);
-    }
-  });
-};
-
-Promise.race = Promise.race || function(values) {
-  // TODO(bradfordcsmith): To be consistent with the ECMAScript spec, this
-  //     method should take any iterable, not just an array.
-  var forcedArray = /** @type {!Array<!Thenable>} */ (values);
-  return new Promise(function (resolve, reject) {
-    for(var i = 0, len = forcedArray.length; i < len; i++) {
-      forcedArray[i].then(resolve, reject);
-    }
-  });
-};
-
-;/* global raml2obj, self */
-self.onmessage = function(e) {
-  try {
-    raml2obj
-    .parse(e.data.raml)
-    .then(function(result) {
-      self.postMessage({
-        result: result
-      });
-    });
-  } catch (e) {
-    self.postMessage({
-      error: true,
-      message: 'Worker parser error: ' + e.message
-    });
-  }
-};
+;"use strict";function _classCallCheck(a,b){if(!(a instanceof b))throw new TypeError("Cannot call a class as a function")}var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},_createClass=function(){function a(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1,d.configurable=!0,"value"in d&&(d.writable=!0),Object.defineProperty(a,d.key,d)}}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}();!function b(c,d,e){function a(h,i){if(!d[h]){if(!c[h]){var j="function"==typeof require&&require;if(!i&&j)return j(h,!0);if(g)return g(h,!0);var k=new Error("Cannot find module '"+h+"'");throw k.code="MODULE_NOT_FOUND",k}var f=d[h]={exports:{}};c[h][0].call(f.exports,function(b){var d=c[h][1][b];return a(d||b)},f,f.exports,b,c,d,e)}return d[h].exports}for(var g="function"==typeof require&&require,f=0;f<e.length;f++)a(e[f]);return a}({1:[function(a,b,c){},{}],2:[function(a,b,c){var d=a("./");"undefined"==typeof window?self.raml2obj=d:window.raml2obj=d},{"./":3}],3:[function(a,b,c){var d=a("./lib/enhencer"),e=d.RamlJsonEnhancer,f=a("./lib/arrays-objects"),g=f.arraysToObjects,h=a("./lib/expander"),i=h.ExpansionLibrary;b.exports.parse=function(a){return(new e).enhance(a)},b.exports.prepareObject=function(a){var b={json:[]};return a?(g(a),b.json=a,Promise.resolve(b)):Promise.resolve(b)},b.exports.expandTypes=function(a){var b={types:[]};return a&&Object.keys(a).length?i.expandRootTypes(a).then(function(a){return b.types=a,b}):Promise.resolve(b)},b.exports.normalize=function(a,b){var c={json:[]};return a?(a=(new e).normalize(a,b),c.json=a,Promise.resolve(c)):Promise.resolve(c)}},{"./lib/arrays-objects":4,"./lib/enhencer":6,"./lib/expander":7}],4:[function(a,b,c){function d(a){return a&&a===Object(a)&&!Array.isArray(a)}function e(a){return Array.isArray(a)?a:Object.keys(a).map(function(b){return d(a[b])&&(a[b].key=b),a[b]})}function f(a){return a.reduce(function(a,b){return Object.keys(b).forEach(function(c){a[c]=b[c]}),a},{})}function g(a){return Array.isArray(a)?a.forEach(function(a){g(a)}):d(a)&&Object.keys(a).forEach(function(b){var c=a[b];-1!==i.indexOf(b)&&d(c)&&(a[b]=e(c)),g(c)}),a}function h(a){return j.forEach(function(b){b in a&&a[b]&&(a[b]=f(a[b]))}),a}var i=["responses","body","queryParameters","headers","properties","baseUriParameters","annotations","uriParameters"],j=["types","traits","resourceTypes","annotationTypes","securitySchemes"];b.exports={arraysToObjects:h,recursiveObjectToArray:g}},{}],5:[function(a,b,c){var d=function(){function a(){_classCallCheck(this,a)}return _createClass(a,null,[{key:"isObject",value:function(a){return a&&a===Object(a)&&!Array.isArray(a)}},{key:"makeConsistent",value:function(b,c){if(!b||b.__typeConsistent)return b;if(Array.isArray(b))b.forEach(function(d,e){b[e]=a.makeConsistent(d,c)});else if(a.isObject(b)){b=a.consistentExample(b),b.type&&(b=a.consistentType(b,c)),b.items&&c&&c[b.items]&&(b.items=c[b.items]);var d=Object.keys(b);d.forEach(function(d){b[d]=a.makeConsistent(b[d],c)})}return b}},{key:"consistentType",value:function(b,c){return Array.isArray(b.type)&&(b.type=b.type[0]),c&&c[b.type]&&a.applyType(b,c[b.type]),b}},{key:"consistentExample",value:function(a){return a.examples&&a.examples.length&&(a.examples=a.examples.map(function(a){return a.value?a.value:a})),a.structuredExample&&(void 0===a.examples&&(a.examples=[]),a.examples.push(a.structuredExample.value),delete a.example,delete a.structuredExample),a}},{key:"applyType",value:function(a,b){var c=this,d={description:a.description,enum:a.enum,default:a.default,schema:a.schema,xml:a.xml,name:a.name},e={properties:a.properties,items:a.items},f=[];a.examples&&(f=a.examples,delete a.examples),a.example&&(f.push(a.example),delete a.example),a=Object.assign(a,b),a.type&&Array.isArray(a.type)&&(a.type=a.type[0]),a.examples||(a.examples=[]),f.length&&(a.examples=a.examples.concat(f)),Object.keys(e).forEach(function(b){void 0!==e[b]&&(a[b]&&a[b].length||(a[b]=[]),a[b]=c.mergeExcludeDusplicates(e[b],a[b]))}),d.name===d.displayName&&a.displayName!==d.displayName&&delete d.displayName,Object.keys(d).forEach(function(b){void 0!==d[b]&&(a[b]=d[b])}),a.__typeConsistent=!0}},{key:"mergeExcludeDusplicates",value:function(a,b){a&&a.length||(a=[]),b&&b.length||(b=[]);for(var c=0,d=b.length;c<d;c++){for(var e=b[c],f=e.key,g=!1,h=0,i=a.length;h<i;h++)if(a[h].key===f){g=!0;break}g||a.push(e)}return a}}]),a}();b.exports.ConsistencyHelper=d},{}],6:[function(a,b,c){var d=a("./arrays-objects"),e=d.arraysToObjects,f=d.recursiveObjectToArray,g=a("./expander"),h=g.ExpansionLibrary,i=a("./consistency-helpers"),j=i.ConsistencyHelper,k=a("./security-schemes"),l=k.SecuritySchemesTransformer,m=function(){function a(){_classCallCheck(this,a)}return _createClass(a,[{key:"enhance",value:function(a){var b=this;return e(a),h.expandRootTypes(a.types).then(function(c){return b.normalize(a,c)})}},{key:"normalize",value:function(a,b){return delete a.types,this._transformTypesToArrays(b),this._transformObjectsToArrays(a),this._makeRamlConsistent(a,b),this._normalizeObject(a),b&&(a.types=b),a}},{key:"_makeRamlConsistent",value:function(a,b){j.makeConsistent(a,b)}},{key:"_transformObjectsToArrays",value:function(a){f(a)}},{key:"_transformTypesToArrays",value:function(a){f(a)}},{key:"_normalizeObject",value:function(a){var b={securitySchemes:a.securitySchemes};this.enhaceJson(a,b)}},{key:"enhaceJson",value:function(a,b,c,d){var e=this;a.resources&&a.resources.forEach(function(f){f.parentUrl=c||"",f.allUriParameters=a.baseUriParameters?e._clone(a.baseUriParameters):[],d&&(f.allUriParameters=f.allUriParameters.concat(d)),f.baseUriParameters&&(f.allUriParameters=e._mergeBaseParameters(f.allUriParameters,f.baseUriParameters)),f.uriParameters&&(f.allUriParameters=f.allUriParameters.concat(f.uriParameters)),f.methods&&f.methods.forEach(function(a){a.allUriParameters=f.allUriParameters,a.absoluteUri=f.absoluteUri,l.addSecuritSchemes(a,b.securitySchemes)}),l.addSecuritSchemes(f,b.securitySchemes);var g=f.parentUrl+f.relativeUri;e.enhaceJson(f,b,g,f.allUriParameters)})}},{key:"_mergeBaseParameters",value:function(a,b){b=b||[],a=a?this._clone(a):[];for(var c=0,d=b.length;c<d;c++){for(var e=b[c],f=!1,g=0,h=a.length;g<h;g++)if(a[g].name===e.name){f=!0,a[g]=Object.assign(a[g],e);break}f||a.push(e)}return a}},{key:"_isArray",value:function(a){return"[object Array]"===Object.prototype.toString.apply(a)}},{key:"_clone",value:function(a){var b,c;if("object"!==(void 0===a?"undefined":_typeof(a)))return a;if(!a)return a;if(this._isArray(a)){for(b=[],c=0;c<a.length;c+=1)b[c]=this._clone(a[c]);return b}b={};for(c in a)a.hasOwnProperty(c)&&(b[c]=this._clone(a[c]));return b}}]),a}();b.exports.RamlJsonEnhancer=m},{"./arrays-objects":4,"./consistency-helpers":5,"./expander":7,"./security-schemes":8}],7:[function(a,b,c){var d=a("./consistency-helpers"),e=d.ConsistencyHelper,f=!0;("undefined"!=typeof window||"undefined"!=typeof self&&self.origin)&&(f=!1);var g=function(){function b(){_classCallCheck(this,b)}return _createClass(b,null,[{key:"expandRootTypes",value:function(a){if(!a)return Promise.resolve(a);var c=Object.keys(a);if(!c.length)return Promise.resolve(a);var d=c.map(function(c){return b._expandType(a,c)});return Promise.all(d).then(function(b){return b.forEach(function(b){a[b[0]]=b[1]}),a}).then(function(a){return e.makeConsistent(a)})}},{key:"_expandType",value:function(b,c){return new Promise(function(d){var e=f?a("datatype-expansion"):datatype_expansion.js;e.expandedForm(b[c],b,function(a,f){if(a)return console.warn(a),d([c,b[c]]);f?e.canonicalForm(f,function(a,e){if(a)return console.warn(a),d([c,b[c]]);d(e?[c,e]:[c,b[c]])}):d([c,b[c]])})})}}]),b}();b.exports.ExpansionLibrary=g},{"./consistency-helpers":5,"datatype-expansion":1}],8:[function(a,b,c){var d=function(){function a(){_classCallCheck(this,a)}return _createClass(a,null,[{key:"isObject",value:function(a){return a&&a===Object(a)&&!Array.isArray(a)}},{key:"addSecuritSchemes",value:function(b,c){if(c&&Object.keys(c).length&&b&&b.securedBy&&b.securedBy.length){var d=!1;b.securedBy.forEach(function(e,f){if("string"==typeof e)e in c&&(d=!0,b.securedBy[f]=Object.assign({},c[e]));else if(a.isObject(e)){var g=Object.keys(e),h=g[0];if(h in c){d=!0;var i=Object.assign({},c[h]),j=e[h];i.settings=Object.assign({},i.settings,j),b.securedBy[f]=i}}}),d&&a.transform(b)}}},{key:"transform",value:function(a){a.queryParameters||(a.queryParameters=[]),a.headers||(a.headers=[]),a.securedBy||(a.securedBy=[]);var b=[];a.securedBy.forEach(function(c){c&&"string"!=typeof c&&c.describedBy&&(c.describedBy.queryParameters&&(a.queryParameters=a.queryParameters.concat(c.describedBy.queryParameters)),c.describedBy.headers&&(a.headers=a.headers.concat(c.describedBy.headers)),c.describedBy.responses&&(b=b.concat(c.describedBy.responses)))}),a.responses&&(b=b.concat(a.responses)),b.sort(function(c,a){var b=Number(c.code),d=Number(a.code);return b>d?1:b<d?-1:0}),a.responses=b}}]),a}();b.exports.SecuritySchemesTransformer=d},{}]},{},[2]);
+;if(!self.Promise){self.Promise=MakePromise(function(c){c()})}Promise.all=Promise.all||function(){var args=Array.prototype.slice.call(1===arguments.length&&Array.isArray(arguments[0])?arguments[0]:arguments);return new Promise(function(resolve,reject){function res(i,val){try{if(val&&("object"==typeof val||"function"==typeof val)){var then=val.then;if("function"==typeof then)return void then.call(val,function(val){res(i,val)},reject)}args[i]=val,0==--remaining&&resolve(args)}catch(ex){reject(ex)}}if(0===args.length)return resolve([]);for(var remaining=args.length,i=0;i<args.length;i++)res(i,args[i])})},Promise.race=Promise.race||function(values){var forcedArray=values;return new Promise(function(resolve,reject){for(var i=0,len=forcedArray.length;i<len;i++)forcedArray[i].then(resolve,reject)})};
+;"use strict";var Nw={reportError:function(b){self.postMessage({error:!0,message:b})},reportResult:function(b){self.postMessage({error:!1,json:b.json})},reportExpandResult:function(b){self.postMessage({error:!1,types:b.types,raml:b.raml})},messageHandler:function(c){var a=c.data.payload;if(!a)return Nw.reportError("Payload not set");switch(a){case"prepare-types":Nw.prepareObject(c.data.json);break;case"expand-types":Nw.expandTypes(c.data.types,c.data.raml);break;case"normalize":Nw.normalize(c.data.raml,c.data.types);break;default:return Nw.reportError("Unknown payload")}},prepareObject:function(c){var d;try{raml2obj.prepareObject(c,{}).then(function(b){Nw.reportResult(b)}).catch(function(b){return d=b.message||"Unknown prepare types error",Nw.reportError(d)})}catch(b){return d=b.message||"Unknown prepare types error",Nw.reportError(d)}},normalize:function(d,a){var b;try{raml2obj.normalize(d,a,{}).then(function(b){Nw.reportResult(b)}).catch(function(c){return b=c.message||"Unknown normalize error",Nw.reportError(b)})}catch(c){return b=c.message||"Unknown normalize error",Nw.reportError(b)}},expandTypes:function(d,e){var b;try{raml2obj.expandTypes(d,{}).then(function(b){b.raml=e,Nw.reportExpandResult(b)}).catch(function(c){return b=c.message||"Unknown expand types error",Nw.reportError(b)})}catch(c){return b=c.message||"Unknown expand types error",Nw.reportError(b)}}};self.onmessage=Nw.messageHandler;
 ;</script>
   </template>
   <script>
+  (function() {
+  /**
+   * Making the a private propery not available in element's API.
+   * Contains a list of currently running workers.
+   *
+   * @type {Array}
+   */
+  var WORKERS = [];
+  /**
+   * @param {String} name Name of the worker.
+   * @return {Worker} A worker object for the name.
+   */
+  function getWorker(name) {
+    for (var i = 0, len = WORKERS.length; i < len; i++) {
+      if (WORKERS[i].name === name) {
+        return WORKERS[i].ref;
+      }
+    }
+  }
   Polymer({
     is: 'raml-json-enhance',
     properties: {
       /**
-       * A JSON retuned by the `toJson()` function of the RAML JS parser.
+       * A JSON retuned by the `toJson()` function of the RAML JS parser's
+       * API object.
        */
       json: {
         type: Object,
@@ -1008,124 +759,229 @@ self.onmessage = function(e) {
         notify: true,
         readOnly: true
       },
-      // function to be called when worker data are received
-      _workerExpandDataHandler: {
-        type: Function,
-        value: function() {
-          return this._expandWorkerData.bind(this);
-        }
-      },
-      // function to be called when worker error data are received
-      _workerExpandErrorHandler: {
-        type: Function,
-        value: function() {
-          return this._expandWorkerError.bind(this);
-        }
-      },
       /**
-       * If true it will generate a report about the usage time using the
-       * performance API.
-       * It will print the computed data to the console after it finish
-       * computing RAML data.
+       * Current state of the enhancer.
+       * - 0 means ready to work, idle
+       * - 1 - taks is running, pre-expansion tasks are performed
+       * - 2 - expanding types
+       * - 3 - normalizing JavaScript object (from RAML)
        */
-      debug: Boolean,
-      /**
-       * Web worker object used to perform the work.
-       */
-      _expadndWorker: Object
-    },
-
-    /**
-     * Used to debug the application.
-     * It uses the Parformance API to mark a specific point in time.
-     */
-    _markTime: function(name) {
-      if (this.debug && typeof performance !== 'undefined' && performance.mark) {
-        performance.mark(name);
+      state: {
+        type: Number,
+        readOnly: true,
+        value: 0
       }
     },
-
     // Handler for the `json` property change.
     _jsonChnaged: function(json) {
       if (!json) {
         return this._setResult(undefined);
       }
+      this._noSupportedError();
       if (json.specification) {
         json = json.specification;
       }
-      this._normalizeRamlJson(json);
+      this._killWorkers();
+      this._enhance(json);
     },
-
-    _normalizeRamlJson: function(json) {
+    /**
+     * Sends an error when running from unsupported browser.
+     */
+    _noSupportedError: function() {
       var ie10 = /msie 10/i.test(navigator.userAgent);
-      if (!ie10 && !this._expadndWorker) {
-        var blob = new Blob([this.$.worker.textContent]);
-        var workerUrl = window.URL.createObjectURL(blob);
-        var worker = new Worker(workerUrl);
-        worker.addEventListener('message', this._workerExpandDataHandler);
-        worker.addEventListener('error', this._workerExpandErrorHandler);
-        this._expadndWorker = worker;
-      } else if (ie10) {
-        // Hey IE 10 User. You have to suffer main thread freeze! :)
-        // I am doing it even if MS dropped support for IE 10.
-        // I'm not even sure why...
-        var self = {
-          postMessage: function(data) {
-            this._expandWorkerData({
-              data: data
-            });
-          }.bind(this)
-        };
-        eval(this.$.worker.textContent);
-        self.onmessage({
-          data: {
-            raml: json
-          }
-        });
+      if (!ie10) {
         return;
       }
-      this._markTime('raml-worker-expansion-library-send');
-      this._expadndWorker.postMessage({
-        raml: json
+      this._setResult(undefined);
+      this.fire('error', {
+        message: 'This browser is not supported.'
       });
+      throw new Error('This browser is not supported.');
     },
-
-    _expandWorkerData: function(e) {
-      this._markTime('raml-worker-expansion-library-receive');
-      var data = e.data;
-      if (data.error) {
-        console.log('Error in the worker.', data);
-        this.fire('error', {
-          message: data.message
-        });
-        return;
+    /**
+     * Terminates currently running workers.
+     * Thisa is helpful when another process is requested and old process is
+     * still running. It terminates workers so messages from them won't be
+     * sent to the main thread and notified outside for old api call.
+     *
+     * It also clears data URL object created by URL.createObjectURL().
+     *
+     * This resets state to 0.
+     */
+    _killWorkers: function() {
+      for (var i = WORKERS.length - 1; i >= 0; i--) {
+        this.__terminateWorker(WORKERS[i]);
+        WORKERS.splice(i, 1);
       }
-      var result = data.result;
+      this._setState(0);
+    },
+    /**
+     * Terminates the worker if it exists and is running
+     *
+     * @param {Object} workerRef An object created by `__createWorker` function
+     */
+    __terminateWorker: function(workerRef) {
+      workerRef.ref.terminate();
+      workerRef.ref.removeEventListener('message', workerRef.data);
+      workerRef.ref.removeEventListener('error', workerRef.error);
+      this.__clearDataUrl(workerRef.url);
+    },
+    /**
+     * Clears a data URL created by URL.createObjectURL().
+     *
+     * @param {String} url The URL to clean
+     */
+    __clearDataUrl: function(url) {
+      if (url) {
+        window.URL.revokeObjectURL(url);
+      }
+    },
+    /**
+     * Creates a web workers before the work starts.
+     */
+    _createWorkers: function() {
+      var norm = this.__createWorker('_normalize', this.$.normalizer.textContent);
+      WORKERS.push(norm);
+    },
+    /**
+     * Creates an instance of web worker from a text content.
+     *
+     * @param {String} property Name of the worker. `this` must contains
+     * functions for handling data and errors named `property` + `DataHandler`
+     * and `property` + `ErrorHandler`
+     * @param {String} body Body of the worker
+     */
+    __createWorker: function(property, body) {
+      var blob = new Blob([body]);
+      var workerUrl = window.URL.createObjectURL(blob);
+      var worker = new Worker(workerUrl);
+      var dataHandler = this[property + 'DataHandler'].bind(this);
+      var errorHandler = this[property + 'ErrorHandler'].bind(this);
+      worker.addEventListener('message', dataHandler);
+      worker.addEventListener('error', errorHandler);
+
+      return {
+        name: property,
+        ref: worker,
+        url: workerUrl,
+        error: errorHandler,
+        data: dataHandler
+      };
+    },
+    /**
+     * Enhances the JavaScript object.
+     *
+     * @param {Object} json An object returned from RAML js parser after calling
+     * `toJSON`.
+     */
+    _enhance: function(json) {
+      this._createWorkers();
+      this._prepareTypesTask(json);
+    },
+    /**
+     * Calls normalize worker to prepare JSON to be normalized.
+     *
+     * @param {Object} json RAML as JS object
+     */
+    _prepareTypesTask: function(json) {
+      this._setState(1);
+      var worker = getWorker('_normalize');
+      var message = {
+        payload: 'prepare-types',
+        json: json
+      };
+      worker.postMessage(message);
+    },
+    /**
+     * Calls the expansion worker to run the expansion library.
+     *
+     * @param {Object} json RAML as JS object
+     */
+    _expandTypesTask: function(json) {
+      this._setState(2);
+      var worker = getWorker('_normalize');
+      var message = {
+        payload: 'expand-types',
+        types: json.types,
+        raml: json
+      };
+      worker.postMessage(message);
+    },
+    /**
+     * Calls the normalize worker to perform main normalization.
+     *
+     * @param {Object} json RAML as JS object
+     */
+    _normalizeTypesTask: function(types, raml) {
+      this._setState(3);
+      var worker = getWorker('_normalize');
+      var message = {
+        payload: 'normalize',
+        types: types,
+        raml: raml
+      };
+      worker.postMessage(message);
+    },
+    /**
+     * Reports results to the called by dispatching the
+     * `raml-json-enhance-ready` event.
+     *
+     * @param {Object} result Expanded and normalized object.
+     */
+    _reportResult: function(result) {
       this._setResult(result);
       this.fire('raml-json-enhance-ready', {
         json: result
       });
-      this._measureData();
+      this._killWorkers();
     },
-
-    _expandWorkerError: function(e) {
-      this._markTime('raml-worker-expansion-library-receive');
-      var err = new Error(e.message || ' Unknown worker error.');
-      console.log('Error in the worker.', err);
+    /**
+     * Reports an error
+     *
+     * @param {String} errorMessage Error message to report.
+     */
+    _reportError: function(errorMessage) {
+      var err = new Error(errorMessage);
       this.fire('error', {
         message: err.message
       });
+      this._killWorkers();
+      throw err;
     },
-
-    _measureData: function() {
-      if (!this.debug || typeof performance === 'undefined' || !performance.mark) {
+    /**
+     * Handler for a message from the normalize worker.
+     * Depending on current state it calls next function in the chain.
+     */
+    _normalizeDataHandler: function(e) {
+      var data = e.data;
+      if (data.error) {
+        this._reportError(data.message);
         return;
       }
-      performance.measure('worker-work-time', 'raml-worker-expansion-library-send',
-        'raml-worker-expansion-library-receive');
-      var items = performance.getEntriesByType('measure');
-      console.log(items);
+      switch (this.state) {
+        case 1:
+          this._expandTypesTask(data.json);
+          break;
+        case 2:
+          this._normalizeTypesTask(data.types, data.raml);
+          break;
+        case 3:
+          this._setState(0);
+          this._reportResult(data.json);
+          break;
+        default:
+          this._reportError('Normalize worker data handler called in invalid state');
+      }
+    },
+    /**
+     * Normalize worker error handler.
+     */
+    _normalizeErrorHandler: function(e) {
+      var message = (e && e.message) ? 'Normalize worker: ' + e.message :
+        'Unknown normalize worker error.';
+      this._reportError(message);
     }
   });
+  })();
   </script>
 </dom-module>

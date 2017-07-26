@@ -1,17 +1,18 @@
+/* jshint esnext: true */
 const fs = require('fs');
 
 class Builder {
   constructor() {
     this.workerFiles = [
-      'polyfills.js',
-      'Promise.js',
+      'build/polyfills.js',
+      'build/Promise.js',
       'browser/index.js',
-      'raml2object.js'
+      'build/raml2object.js'
     ];
     this.initScript = 'if(!self.Promise){self.Promise=MakePromise(function(c){c()})}';
     this.postInitFiles = [
-      'Promise-Statics.js',
-      'raml-object-worker.js'
+      'build/Promise-Statics.js',
+      'build/normalize-worker.js'
     ];
   }
 
@@ -90,7 +91,7 @@ class Builder {
           reject(new Error(err.message));
           return;
         }
-        data = data.replace('{{WORKER_CONTENT}}', content);
+        data = data.replace('{{RAML2OBJ_CONTENT}}', content);
         fs.writeFile('raml-json-enhance.html', data, 'utf8', function() {
           resolve();
         });

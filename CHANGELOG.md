@@ -1,3 +1,9 @@
+<a name="0.2.1"></a>
+## [0.2.1](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.20...0.2.1) (2017-07-26)
+
+
+
+
 <a name="0.1.20"></a>
 ## [0.1.20](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.1.19...v0.1.20) (2017-07-05)
 
