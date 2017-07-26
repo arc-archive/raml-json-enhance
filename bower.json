@@ -1,14 +1,18 @@
 {
   "name": "raml-json-enhance",
   "description": "Enhaces the JSON output from the RAML parser so it can be used in the ARC elements (which expect enhanced data structure)",
-  "version": "0.1.20",
+  "version": "0.2.0",
   "license": "Apache-2.0 OR CC-BY-4.0",
   "authors": [
     "The Advanced REST client authors <arc@mulesoft.com>"
   ],
   "keywords": [
     "web-components",
-    "polymer"
+    "polymer",
+    "raml",
+    "json",
+    "raml2obj",
+    "enhance"
   ],
   "private": true,
   "main": [
@@ -45,6 +49,12 @@
     "node_modules",
     "bower_components",
     "test",
-    "tasks"
+    "tasks",
+    "browser",
+    "lib",
+    "raml-json-enhance-template.html",
+    "wct.conf.json",
+    "polymer.json",
+    "normalize-worker.js"
   ]
 }
