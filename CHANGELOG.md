@@ -1,3 +1,18 @@
+<a name="0.2.7"></a>
+## [0.2.7](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.2.6...0.2.7) (2017-07-27)
+
+
+### Fix
+
+* Fixed web workers recognition in Safari - new raml2obj ([8876b019005132ea87e621b0c72615db93eb54c6](https://github.com/advanced-rest-client/raml-json-enhance/commit/8876b019005132ea87e621b0c72615db93eb54c6))
+* Hashed back a comment. ([bd33e50cb31c5ff86fd36cd032500a13fee44de3](https://github.com/advanced-rest-client/raml-json-enhance/commit/bd33e50cb31c5ff86fd36cd032500a13fee44de3))
+
+### New
+
+* Added test copied from the raml2obj library. ([0faf99e246dfb36c5ce7b49e00e7f247c717aaad](https://github.com/advanced-rest-client/raml-json-enhance/commit/0faf99e246dfb36c5ce7b49e00e7f247c717aaad))
+
+
+
 <a name="0.2.6"></a>
 ## [0.2.6](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.2.5...0.2.6) (2017-07-27)
 
