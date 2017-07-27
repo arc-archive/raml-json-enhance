@@ -1,0 +1,47 @@
+#%RAML 1.0
+title: Test API
+version: v1
+baseUri: https://domain.com/
+
+types:
+  Test:
+    type: object
+    properties:
+      id:
+        type: number
+        example: 1234
+      name:
+        type: string
+        default: test-string
+      float:
+        type: number
+        format: float
+        example: 123.456
+      nullable:
+        type: nil
+      boolean:
+        type: boolean
+        default: true
+      date:
+        type: datetime
+        default: 2017-07-25T14:32:32.344Z
+      objectable:
+        type: object
+        properties:
+          key:
+            type: string
+            default: test-objectable
+          value:
+            type: string
+            default: value-objectable
+          numerable:
+            type: number
+            default: 1552
+      arrable:
+        type: array
+        items: string
+/test:
+  post:
+    body:
+      application/json:
+        type: Test
