@@ -1,0 +1,89 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/test-helpers.js"></script>
+    <script src="../../iron-test-helpers/mock-interactions.js"></script>
+
+    <link rel="import" href="../../raml-js-parser/raml-js-parser.html">
+    <link rel="import" href="../raml-json-enhance.html">
+  </head>
+  <body>
+
+    <test-fixture id="parser">
+      <template>
+        <raml-js-parser json></raml-js-parser>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="basic">
+      <template>
+        <raml-json-enhance></raml-json-enhance>
+      </template>
+    </test-fixture>
+
+    <script>
+    /* global fixture, assert */
+    suite('worldmusic', function() {
+      var obj;
+      suiteSetup(function(done) {
+        this.timeout(30000);
+        var parser = fixture('parser');
+        var element = fixture('basic');
+
+        var clb = function() {
+          obj = element.result;
+          done();
+        };
+        var clbErr = function(e) {
+          done(new Error(e.detail.message));
+        };
+        element.addEventListener('raml-json-enhance-ready', clb);
+        element.addEventListener('error', clbErr);
+        var baseUrl = location.href.substr(0, location.href.lastIndexOf('/') + 1);
+
+        parser.loadApi(baseUrl + 'worldmusic.raml')
+        .then(function(data) {
+          element.json = data.json.specification;
+        })
+        .catch(function(e) {
+          done(new Error('Parser error: ' + (e.message || 'Some error happened...')));
+        });
+      });
+
+      test('Parsed the object', function() {
+        assert.typeOf(obj, 'object');
+      });
+
+      test('Tests the basic properties of the raml object', function() {
+        assert.equal(obj.title, 'World Music API');
+        assert.equal(obj.version, 'v1');
+        assert.equal(obj.baseUri, 'http://{environment}.musicapi.com/{version}');
+        assert.lengthOf(obj.resources, 3);
+      });
+
+      test('Computes the baseUriParameters', function() {
+        assert.lengthOf(obj.baseUriParameters, 2);
+      });
+
+      test('Computes the documentation', function() {
+        assert.strictEqual(obj.documentation.length, 2);
+      });
+    });
+    </script>
+
+  </body>
+</html>
