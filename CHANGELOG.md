@@ -1,3 +1,13 @@
+<a name="0.2.5"></a>
+## [0.2.5](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.2.4...0.2.5) (2017-07-27)
+
+
+### Update
+
+* Update to the build process ([3a2da97eb3014ec3e632b475908cb74037176bc3](https://github.com/advanced-rest-client/raml-json-enhance/commit/3a2da97eb3014ec3e632b475908cb74037176bc3))
+
+
+
 <a name="0.2.4"></a>
 ## [0.2.4](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.2.3...0.2.4) (2017-07-26)
 
