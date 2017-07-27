@@ -28,7 +28,7 @@ function compileWorker() {
   ugly "build/normalize-worker.js"
 }
 
-First build the expnasion library, browser version.
+# First build the expnasion library, browser version.
 rm -rf build/*
 compileExpander || exit 1
 
