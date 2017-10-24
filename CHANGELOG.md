@@ -1,3 +1,13 @@
+<a name="0.2.9"></a>
+## [0.2.9](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.2.7...0.2.9) (2017-10-24)
+
+
+### Update
+
+* Updated version for new raml2obj library. ([be84921db7f4b628d266938be564ceecbcba6547](https://github.com/advanced-rest-client/raml-json-enhance/commit/be84921db7f4b628d266938be564ceecbcba6547))
+
+
+
 <a name="0.2.8"></a>
 ## [0.2.8](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.2.7...0.2.8) (2017-07-27)
 
