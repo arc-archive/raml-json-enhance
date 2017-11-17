@@ -131,18 +131,17 @@ script.
         notify: true,
         readOnly: true
       },
+      // Flag set to true when currently JSON is being enhanced.
+      expanding: {
+        type: Boolean,
+        notify: true,
+        readOnly: true
+      },
       /**
-       * Current state of the enhancer.
-       * - 0 means ready to work, idle
-       * - 1 - taks is running, pre-expansion tasks are performed
-       * - 2 - expanding types
-       * - 3 - normalizing JavaScript object (from RAML)
+       * If true it will instruct `raml2obj` library to measure execution
+       * time. It will be printed to the console after RAML is enhanced
        */
-      state: {
-        type: Number,
-        readOnly: true,
-        value: 0
-      }
+      printMeasurements: Boolean
     },
     // Handler for the `json` property change.
     _jsonChnaged: function(json) {
@@ -154,7 +153,7 @@ script.
         json = json.specification;
       }
       this._killWorkers();
-      this._enhance(json);
+      this.enhance(json);
     },
     /**
      * Sends an error when running from unsupported browser.
@@ -185,7 +184,6 @@ script.
         this.__terminateWorker(WORKERS[i]);
         WORKERS.splice(i, 1);
       }
-      this._setState(0);
     },
     /**
      * Terminates the worker if it exists and is running
@@ -246,51 +244,14 @@ script.
      * @param {Object} json An object returned from RAML js parser after calling
      * `toJSON`.
      */
-    _enhance: function(json) {
+    enhance: function(json) {
+      this._setExpanding(true);
       this._createWorkers();
-      this._prepareTypesTask(json);
-    },
-    /**
-     * Calls normalize worker to prepare JSON to be normalized.
-     *
-     * @param {Object} json RAML as JS object
-     */
-    _prepareTypesTask: function(json) {
-      this._setState(1);
       var worker = getWorker('_normalize');
       var message = {
-        payload: 'prepare-types',
-        json: json
-      };
-      worker.postMessage(message);
-    },
-    /**
-     * Calls the expansion worker to run the expansion library.
-     *
-     * @param {Object} json RAML as JS object
-     */
-    _expandTypesTask: function(json) {
-      this._setState(2);
-      var worker = getWorker('_normalize');
-      var message = {
-        payload: 'expand-types',
-        types: json.types,
-        raml: json
-      };
-      worker.postMessage(message);
-    },
-    /**
-     * Calls the normalize worker to perform main normalization.
-     *
-     * @param {Object} json RAML as JS object
-     */
-    _normalizeTypesTask: function(types, raml) {
-      this._setState(3);
-      var worker = getWorker('_normalize');
-      var message = {
-        payload: 'normalize',
-        types: types,
-        raml: raml
+        payload: 'parse',
+        json: json,
+        takeMeasurements: this.printMeasurements
       };
       worker.postMessage(message);
     },
@@ -330,19 +291,10 @@ script.
         this._reportError(data.message);
         return;
       }
-      switch (this.state) {
-        case 1:
-          this._expandTypesTask(data.json);
-          break;
-        case 2:
-          this._normalizeTypesTask(data.types, data.raml);
-          break;
-        case 3:
-          this._setState(0);
-          this._reportResult(data.json);
-          break;
-        default:
-          this._reportError('Normalize worker data handler called in invalid state');
+      var json = data.result.json;
+      this._reportResult(json);
+      if (data.result.measurement) {
+        console.table(data.result.measurement);
       }
     },
     /**

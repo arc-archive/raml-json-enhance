@@ -8,7 +8,7 @@
     "babel-plugin-minify-mangle-names": "^0.1.3",
     "babel-preset-es2015": "^6.18.0",
     "browserify": "^14.4.0",
-    "datatype-expansion": "^0.1.0",
+    "datatype-expansion": "git://github.com/raml-org/datatype-expansion#raml2obj_integration",
     "polymer-cli": "^1.2.0",
     "raml2obj": "github:advanced-rest-client/raml2obj#5.1.0",
     "uglify-js": "^2.7.5"
