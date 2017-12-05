@@ -11,7 +11,8 @@
     "datatype-expansion": "0.2.6",
     "polymer-cli": "^1.2.0",
     "raml2obj": "github:advanced-rest-client/raml2obj#6.1.0",
-    "uglify-js": "^2.7.5"
+    "uglify-js": "^2.7.5",
+    "bower": "^1.8.0"
   },
   "engines": {
     "node": ">=0.10.0"
