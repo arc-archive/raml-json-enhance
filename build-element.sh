@@ -22,11 +22,11 @@ rm -rf build/*
 contents=()
 contents[0]=$(ugly "lib/polyfills.js")
 contents[1]=$(ugly "bower_components/promise-polyfill/Promise.js")
-contents[1]=`cat ./node_modules/datatype-expansion/dist/datatype-expansion.js`
-contents[2]=$(compileRaml2obj)
+contents[2]=`cat ./node_modules/datatype-expansion/dist/datatype-expansion.js`
+contents[3]=$(compileRaml2obj)
 contents[4]=$(ugly "lib/init-script.js")
 contents[5]=$(ugly "bower_components/promise-polyfill/Promise-Statics.js")
-contents[3]=$(compileWorker)
+contents[6]=$(compileWorker)
 
 content=""
 for data in "${contents[@]}"
