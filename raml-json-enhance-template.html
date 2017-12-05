@@ -286,6 +286,7 @@ script.
      * Depending on current state it calls next function in the chain.
      */
     _normalizeDataHandler: function(e) {
+      this._setExpanding(false);
       var data = e.data;
       if (data.error) {
         this._reportError(data.message);
