@@ -9,6 +9,7 @@ function compileRaml2obj() {
   browserify node_modules/raml2obj/browser.js -o build/browserified.js --ignore datatype-expansion
   babel build/browserified.js > build/babeled.js
   ugly "build/babeled.js"
+  # cat build/babeled.js
 }
 
 function compileWorker() {
