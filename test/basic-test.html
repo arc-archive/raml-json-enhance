@@ -63,12 +63,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         assert.isUndefined(element.result);
       });
 
-      test('state is zero', function() {
-        assert.equal(element.state, 0);
+      test('expanding is undefined', function() {
+        assert.isUndefined(element.expanding);
+      });
+
+      test('printMeasurements is undefined', function() {
+        assert.isUndefined(element.printMeasurements);
+      });
+
+      test('Sets the expanding property', function() {
+        element.json = parsedRaml;
+        assert.isTrue(element.expanding);
+      });
+
+      test('Expanding property is reset after expanding', function(done) {
+        this.timeout(30000);
+        var clbErr;
+        var clb = function() {
+          element.removeEventListener('raml-json-enhance-ready', clb);
+          element.removeEventListener('error', clbErr);
+          assert.isFalse(element.expanding);
+          done();
+        };
+        clbErr = function() {
+          element.removeEventListener('error', clbErr);
+          element.removeEventListener('raml-json-enhance-ready', clb);
+          assert.isFalse(element.expanding);
+          done();
+        };
+        element.addEventListener('raml-json-enhance-ready', clb);
+        element.addEventListener('error', clbErr);
+        element.json = parsedRaml;
       });
 
       test('The result property is set', function(done) {
         this.timeout(30000);
+        var clbErr;
         var clb = function() {
           element.removeEventListener('raml-json-enhance-ready', clb);
           element.removeEventListener('error', clbErr);
@@ -76,27 +106,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           done();
         };
-        var clbErr = function(e) {
+        clbErr = function(e) {
           element.removeEventListener('error', clbErr);
           element.removeEventListener('raml-json-enhance-ready', clb);
-          done(new Error(e.detail.message));
-        };
-        element.addEventListener('raml-json-enhance-ready', clb);
-        element.addEventListener('error', clbErr);
-        element.json = parsedRaml;
-      });
-
-      test('State is restored to zero', function(done) {
-        this.timeout(30000);
-        var clb = function() {
-          element.removeEventListener('raml-json-enhance-ready', clb);
-          element.removeEventListener('error', clbErr);
-          assert.equal(element.state, 0);
-
-          done();
-        };
-        var clbErr = function(e) {
-          element.removeEventListener('error', clbErr);
           done(new Error(e.detail.message));
         };
         element.addEventListener('raml-json-enhance-ready', clb);
