@@ -1,3 +1,13 @@
+<a name="0.3.5"></a>
+## [0.3.5](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.3.4...0.3.5) (2017-12-27)
+
+
+### New
+
+* Added tests for inline types ([b9cfdbeb2b90a0d9cdb8e828fc0ecdbe8acffad6](https://github.com/advanced-rest-client/raml-json-enhance/commit/b9cfdbeb2b90a0d9cdb8e828fc0ecdbe8acffad6))
+
+
+
 <a name="0.3.4"></a>
 ## [0.3.4](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.3.3...0.3.4) (2017-12-27)
 
