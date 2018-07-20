@@ -1,3 +1,13 @@
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.3.7...0.4.0) (2018-07-20)
+
+
+### Update
+
+* Updating version of dependencies. ([48c0446860f84b5586314084085f0ae236332c65](https://github.com/advanced-rest-client/raml-json-enhance/commit/48c0446860f84b5586314084085f0ae236332c65))
+
+
+
 <a name="0.3.8"></a>
 ## [0.3.8](https://github.com/advanced-rest-client/raml-json-enhance/compare/0.3.7...0.3.8) (2018-02-06)
 
