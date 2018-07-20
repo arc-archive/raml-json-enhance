@@ -12,6 +12,13 @@ function compileRaml2obj() {
   # cat build/babeled.js
 }
 
+function compileDatatype() {
+  browserify lib/datatype-lib.js -o build/datatype.js
+  babel build/datatype.js > build/datatype-babeled.js
+  ugly "build/datatype-babeled.js"
+  # cat build/datatype-babeled.js
+}
+
 function compileWorker() {
   babel --plugins minify-mangle-names lib/normalize-worker.js > build/normalize-worker.js
   ugly "build/normalize-worker.js"
@@ -23,7 +30,7 @@ rm -rf build/*
 contents=()
 contents[0]=$(ugly "lib/polyfills.js")
 contents[1]=$(ugly "bower_components/promise-polyfill/Promise.js")
-contents[2]=`cat ./node_modules/datatype-expansion/dist/datatype-expansion.js`
+contents[2]=$(compileDatatype)
 contents[3]=$(compileRaml2obj)
 contents[4]=$(ugly "lib/init-script.js")
 contents[5]=$(ugly "bower_components/promise-polyfill/Promise-Statics.js")
