@@ -41,7 +41,7 @@
     "paper-input": "PolymerElements/paper-input#^1.1.20",
     "file-drop": "advanced-rest-client/file-drop#^1.0.2",
     "raml-main-entry-lookup": "advanced-rest-client/raml-main-entry-lookup#^1.0.1",
-    "raml-js-parser": "advanced-rest-client/raml-js-parser#^2.0.1"
+    "raml-js-parser": "advanced-rest-client/raml-js-parser#^2.0.6"
   },
   "ignore": [
     "**/.*",

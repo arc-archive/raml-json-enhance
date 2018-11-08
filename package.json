@@ -9,7 +9,7 @@
     "babel-preset-env": "^1.7.0",
     "browserify": "^14.4.0",
     "datatype-expansion": "0.3.4",
-    "raml2obj": "github:advanced-rest-client/raml2obj#6.2.0",
+    "raml2obj": "github:advanced-rest-client/raml2obj#6.2.1",
     "uglify-js": "^2.7.5"
   },
   "private": false,
