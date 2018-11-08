@@ -1,16 +1,19 @@
 {
   "name": "raml-json-enhance",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "license": "Apache-2.0 OR CC-BY-4.0",
   "description": "Enhaces the JSON output from the RAML parser so it can be used in the ARC elements (which expect enhanced data structure)",
   "devDependencies": {
+    "@babel/core": "^7.1.5",
+    "@babel/preset-env": "^7.1.5",
     "babel-cli": "^6.26.0",
     "babel-plugin-minify-mangle-names": "0.4.3",
     "babel-preset-env": "^1.7.0",
-    "browserify": "^14.4.0",
+    "browserify": "16.2.3",
     "datatype-expansion": "0.3.4",
-    "raml2obj": "github:advanced-rest-client/raml2obj#6.2.0",
-    "uglify-js": "^2.7.5"
+    "fs-extra": "^7.0.1",
+    "raml2obj": "github:advanced-rest-client/raml2obj#6.2.1",
+    "uglify-js": "3.4.9"
   },
   "private": false,
   "main": [
@@ -23,7 +26,7 @@
     "update-deps": "npm update --quiet && bower update --quiet",
     "test-sauce": "node_modules/.bin/polymer test --plugin sauce --job-name \"raml-json-enhance:local-test\"",
     "test": "node_modules/.bin/polymer test --plugin local",
-    "build": "./build-element.sh"
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",

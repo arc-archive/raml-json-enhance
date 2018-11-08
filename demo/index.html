@@ -168,9 +168,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   scope.parseRaml = function(item) {
     scope.working = true;
-
     var detail = {
-      'file': item.entry,
+      'file': item.entry || item,
       'files': scope.file
     };
     var event = scope.fire('parse-raml-file', detail);

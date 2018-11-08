@@ -1,7 +1,7 @@
 {
   "name": "raml-json-enhance",
   "description": "Enhaces the JSON output from the RAML parser so it can be used in the ARC elements (which expect enhanced data structure)",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "license": "Apache-2.0 OR CC-BY-4.0",
   "authors": [
     "The Advanced REST client authors <arc@mulesoft.com>"
@@ -41,7 +41,7 @@
     "paper-input": "PolymerElements/paper-input#^1.1.20",
     "file-drop": "advanced-rest-client/file-drop#^1.0.2",
     "raml-main-entry-lookup": "advanced-rest-client/raml-main-entry-lookup#^1.0.1",
-    "raml-js-parser": "advanced-rest-client/raml-js-parser#^2.0.1"
+    "raml-js-parser": "advanced-rest-client/raml-js-parser#^2.0.6"
   },
   "ignore": [
     "**/.*",
