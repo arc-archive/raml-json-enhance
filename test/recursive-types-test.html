@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../../raml-js-parser/raml-js-parser.html">
+    <link rel="import" href="../raml-json-enhance.html">
+  </head>
+  <body>
+
+    <test-fixture id="parser">
+      <template>
+        <raml-js-parser json></raml-js-parser>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="Basic">
+      <template>
+        <raml-json-enhance></raml-json-enhance>
+      </template>
+    </test-fixture>
+
+    <script>
+    /* global fixture, assert */
+    suite('Recursive types', function() {
+      let obj;
+      let element;
+
+      function enhance(element, parsedRaml) {
+        return new Promise((resolve, reject) => {
+          element.addEventListener('raml-json-enhance-ready', (e) => {
+            resolve(e.detail.json);
+          });
+          element.addEventListener('error', (e) => {
+            reject(new Error(e.detail.message));
+          });
+          element.json = parsedRaml;
+        });
+      }
+
+      suiteSetup(function(done) {
+        this.timeout(30000);
+        const baseUrl = location.href.substr(0, location.href.lastIndexOf('/') + 1);
+        const parser = fixture('parser');
+        parser.loadApi(baseUrl + 'SE-9616/loop.raml')
+        .then(function(data) {
+          element = fixture('Basic');
+          return enhance(element, data.json.specification);
+        })
+        .then((data) => {
+          obj = data;
+          done();
+        })
+        .catch(function(e) {
+          done(new Error('Parser error: ' + (e.message || 'Some error happened...')));
+        });
+      });
+
+      test('types property is computed', () => {
+        assert.typeOf(obj.types, 'object');
+        assert.lengthOf(Object.keys(obj.types), 1);
+      });
+
+      test('resources property is computed', () => {
+        assert.typeOf(obj.resources, 'array');
+        assert.lengthOf(obj.resources, 1);
+      });
+
+      test('Recursive type is computed', () => {
+        const type = obj.resources[0].methods[0].headers[0];
+        assert.typeOf(type, 'object');
+        assert.equal(type.displayName, 'product');
+      });
+
+      test('Recursive type has single property', () => {
+        const properties = obj.resources[0].methods[0].headers[0].properties;
+        assert.typeOf(properties, 'array');
+        assert.lengthOf(properties, 1);
+      });
+
+      test('Recusrive property is not expanded', () => {
+        const property = obj.resources[0].methods[0].headers[0].properties[0];
+        assert.equal(property.items, 'product');
+      });
+    });
+    </script>
+
+  </body>
+</html>
